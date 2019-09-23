@@ -10,8 +10,8 @@ var BearerStrategy = require('passport-azure-ad').BearerStrategy;
 
 // TODO: Update these three variables based on your registered API in AAD B2C
 var tenantName = "nielskilab"
-var clientID = "7063f03f-d374-4cde-8a84-45d14da76237";
-var policyName = "B2C_1_social-react";
+var clientID = "b942470e-4b84-4160-bdf5-41355af9a41a";
+var policyName = "B2C_1A_Consent_SUSI";
 
 var domain = "login.microsoftonline.com"
 var tenantID = tenantName + ".onmicrosoft.com";
