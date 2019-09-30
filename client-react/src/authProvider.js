@@ -49,7 +49,7 @@ export const authProvider = new MsalAuthProvider(
     },
   },
   {
-    scopes: ['openid'],
+    scopes: ['https://nielskilab.onmicrosoft.com/hello/demo.read'],
   },
   LoginType.Popup,
 );

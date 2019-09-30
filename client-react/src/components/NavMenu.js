@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 import { authProvider } from '../authProvider';
-import store from '../store/configureStore';
+import store from '../store/store';
 
 export default class NavMenu extends React.Component {
   constructor (props) {
@@ -37,7 +37,7 @@ export default class NavMenu extends React.Component {
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
                 </NavItem>
-                <AzureAD provider={authProvider}>
+                <AzureAD provider={authProvider} reduxStore={store}>
                   {
                     ({login, logout, authenticationState, accountInfo}) => {
                       if (authenticationState === AuthenticationState.Authenticated) {
