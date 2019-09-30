@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 import { authProvider } from '../authProvider';
+import store from '../store/configureStore';
 
 export default class NavMenu extends React.Component {
   constructor (props) {
@@ -36,21 +37,20 @@ export default class NavMenu extends React.Component {
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
                 </NavItem>
-                <AzureAD provider={authProvider} forceLogin={false}>
+                <AzureAD provider={authProvider}>
                   {
                     ({login, logout, authenticationState, accountInfo}) => {
                       if (authenticationState === AuthenticationState.Authenticated) {
                         return (
-                          <ul className="nav-item dropdown-menu">Welcome, {accountInfo.account.name}!
-                            <li><a href="#books">Books</a></li>
-                            <li><a href="#podcasts">Podcasts</a></li>
-                          </ul>
-                        );
+                          <React.Fragment>
+                            <button onClick={logout} className="nav-link text-dark">Logout</button>
+                          </React.Fragment>
+                        )
                       } else if (authenticationState === AuthenticationState.Unauthenticated) {
                         return (
-                          <NavItem>
-                            <button onClick={login}>Login</button>
-                          </NavItem>
+                          <React.Fragment>
+                            <button onClick={login} className="nav-link text-dark">Login</button>
+                          </React.Fragment>
                         );
                       }
                     }
