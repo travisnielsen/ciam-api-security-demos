@@ -45,7 +45,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get("/hello",
+app.get("/health",
     passport.authenticate('oauth-bearer', {session: false}),
     function (req, res) {
         var claims = req.authInfo;
