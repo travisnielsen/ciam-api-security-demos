@@ -1,5 +1,7 @@
 import React from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
@@ -43,9 +45,18 @@ export default class NavMenu extends React.Component {
                       if (authenticationState === AuthenticationState.Authenticated) {
                         return (
                           <React.Fragment>
-                            <button onClick={logout} className="nav-link text-dark">Logout</button>
+                            <div class="btn-group">
+                              <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {accountInfo.account.idToken.given_name}
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <button class="dropdown-item" type="button">Edit Profile</button>
+                                <div class="dropdown-divider"></div>
+                                <button onClick={logout} className="dropdown-item" type="button">Sign Out</button>
+                              </div>
+                            </div>
                           </React.Fragment>
-                        )
+                        );
                       } else if (authenticationState === AuthenticationState.Unauthenticated) {
                         return (
                           <React.Fragment>

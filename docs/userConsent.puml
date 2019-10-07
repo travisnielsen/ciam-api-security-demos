@@ -1,0 +1,47 @@
+@startuml User Consent and API Security
+
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/release/2-1/dist
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/Analytics/AzureDatabricks.puml
+!includeurl AzurePuml/Storage/AzureDataLakeStorage.puml
+!includeurl AzurePuml/Security/AzureKeyVault.puml
+!includeurl AzurePuml/Web/AzureWebApp.puml
+!includeurl AzurePuml/Identity/AzureActiveDirectory.puml
+
+LAYOUT_LEFT_RIGHT
+
+skinparam TitleFontSize 24
+title User Consent and API Security
+
+skinparam Rectangle {
+    BorderColor<<virtualNetwork>> Blue
+    BorderColor<<networkAcls>> Blue
+}
+
+actor "User A" as user
+
+AzureWebApp(web, "Mobile", "React / iOS","Last Mile delivery option")
+AzureActiveDirectory(aad, "Authentication / Token Endpoints", "Premium", "MFA + Conditional Access")
+
+Rectangle "Customer Environment" <<NetworkPerimeter>> {
+
+    Rectangle "Databricks" <<virtualNetwork>> #line.dotted {
+        AzureDatabricks(databricks, "Data Science", "Standard cluster v5.3+")
+    }
+
+    Rectangle "VNET only" <<networkAcls>> #line.dotted {
+        AzureKeyVault(vault, "PII SP Credentials", "Standard", "Allow: User A")
+        AzureDataLakeStorage(adls, "Data", "Standard SKU; POSIX ACLS", "PII Folder: PII SP = Read")
+    }
+}
+
+Rel(user, web, "Interactive session")
+Rel(web, databricks, "Jobs")
+Rel(user, aad, "[1] Authenticate")
+Rel(databricks, vault, "[2] Fetch svc principal pwd")
+Rel(databricks, aad, "[3] Get access token")
+Rel(databricks, adls, "[4] Access PII folder (as svc principal)")
+
+@end
