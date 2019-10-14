@@ -12,7 +12,8 @@
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
- <BuildingBlocks>
+  
+  <BuildingBlocks>
 
   </BuildingBlocks>
 
@@ -33,6 +34,88 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+
+    <!--  Sample action: Update values in appID and ClientID; this enables extensionAttributes.
+          Use the MS Docs for guidance: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-create-custom-attributes-profile-edit-custom
+    -->
+    <ClaimsProvider>
+      <DisplayName>Azure Active Directory</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AAD-Common">
+          <Metadata>
+            <Item Key="ApplicationObjectId">74179fff-8c84-45ad-9e31-7eca76c0a392</Item>
+            <Item Key="ClientId">58174eb0-7986-4461-a4c7-b0e500befb49</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+          </CryptographicKeys>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Google</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Google-OAUTH">
+          <Metadata>
+            <Item Key="client_id">864008623237-tudokk1fh2f6n46bc6tfgqqjn7fo8b99.apps.googleusercontent.com</Item>
+            <Item Key="scope">email profile</Item>
+            <Item Key="HttpBinding">POST</Item>
+            <Item Key="UsePolicyInRedirectUri">0</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="client_secret" StorageReferenceId="B2C_1A_GoogleSecret" />
+          </CryptographicKeys>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!--Generic OIDC sign-in - Contoso -->
+    <ClaimsProvider>
+        <DisplayName>Contoso</DisplayName>
+        <TechnicalProfiles>
+          <TechnicalProfile Id="Contoso-OAUTH">
+            <DisplayName>Contoso</DisplayName>
+            <Description>Login with your Contoso account</Description>
+            <Protocol Name="OpenIdConnect" />
+            <Metadata>
+              <Item Key="ProviderName">https://contoso-identityserver.azurewebsites.net</Item>
+              <Item Key="METADATA">https://contoso-identityserver.azurewebsites.net/.well-known/openid-configuration</Item>
+              <Item Key="IdTokenAudience">nielskib2c</Item>
+              <Item Key="response_types">code</Item>
+              <Item Key="response_mode">form_post</Item>
+              <Item Key="UsePolicyInRedirectUri">0</Item>
+              <Item Key="client_id">nielskib2c</Item>
+              <Item Key="scope">openid</Item>
+              <Item Key="HttpBinding">POST</Item>
+            </Metadata>
+            <CryptographicKeys>
+              <Key Id="client_secret" StorageReferenceId="B2C_1A_ContosoSecret" />
+            </CryptographicKeys>
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="sub" />
+                <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+                <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
+                <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+                <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="contoso.com" />
+                <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" />
+
+                <!-- Supports consent to Terms of Service-->
+                <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" Required="true" />
+                <!--Sample: This is set to "false" by default to bypass OrchestrationStep 4 during Sign-in-->
+                <OutputClaim ClaimTypeReferenceId="renewalTOSrequired" DefaultValue="false" />
+                
+              </OutputClaims>
+              <OutputClaimsTransformations>
+                <OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+                <OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+                <OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+                <OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+              </OutputClaimsTransformations>
+              <UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialLogin" />
+          </TechnicalProfile>
+        </TechnicalProfiles>
+      </ClaimsProvider>
 
   </ClaimsProviders>
 
