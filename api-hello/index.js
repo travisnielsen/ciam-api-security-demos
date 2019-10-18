@@ -62,6 +62,24 @@ app.get("/hello",
     }
 );
 
+app.get("/scopes",
+    passport.authenticate('oauth-bearer', {session: false}),
+    function (req, res) {
+        var claims = req.authInfo;
+        console.log('User info: ', req.user);
+        console.log('Validated claims: ', claims);
+        
+        if (claims['scp'].split(" ").indexOf("demo.read") >= 0) {
+            // hard-coded demo scopes (for now)
+            res.status(200).json({'scopes': ['green', 'blue', 'orange']});
+        } else {
+            console.log("Invalid Scope, 403");
+            res.status(403).json({'error': 'insufficient_scope'}); 
+        }
+    }
+);
+
+
 var port = process.env.PORT || 5000;
 app.listen(port, function () {
     console.log("Listening on port " + port);
