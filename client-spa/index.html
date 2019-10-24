@@ -123,6 +123,7 @@
 
     function callApiWithAccessToken(accessToken) {
       // Call the Web API with the AccessToken
+      logMessage(accessToken);
       $.ajax({
         type: "GET",
         url: appConfig.webApi,

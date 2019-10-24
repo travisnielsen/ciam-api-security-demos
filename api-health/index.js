@@ -1,7 +1,4 @@
-// Authors:
-// Shane Oatman https://github.com/shoatman
-// Sunil Bandla https://github.com/sunilbandla
-// Daniel Dobalian https://github.com/danieldobalian
+// SAMPLE API FOR TESTING JWT ACCESS TOKENS ISSUED BY CUSTOM AZURE API MANAGEMENT POLICY CODE
 
 var express = require("express");
 var morgan = require("morgan");
@@ -9,18 +6,12 @@ var passport = require("passport");
 var BearerStrategy = require('passport-azure-ad').BearerStrategy;
 
 // TODO: Update these three variables based on your registered API in AAD B2C
-var tenantName = "nielskilab"
 var clientID = "b942470e-4b84-4160-bdf5-41355af9a41a";
-var policyName = "B2C_1A_Consent_SUSI";
-
-var domain = "login.microsoftonline.com"
-var tenantID = tenantName + ".onmicrosoft.com";
 
 var options = {
-    identityMetadata: "https://" + domain + "/" + tenantID + "/v2.0/.well-known/openid-configuration/",
+    identityMetadata: "https://nielskilab-hello.azurewebsites.net/demoidp/.well-known/openid-configuration/",
     clientID: clientID,
-    policyName: policyName,
-    isB2C: true,
+    isB2C: false,
     validateIssuer: true,
     loggingLevel: 'info',
     passReqToCallback: false
@@ -54,7 +45,7 @@ app.get("/health",
         
         if (claims['scp'].split(" ").indexOf("health.read") >= 0) {
             // Service relies on the name claim.  
-            res.status(200).json({'firstName': claims['given_name'], 'lastName': claims['family_name'], 'city': claims['city']});
+            res.status(200).json({'firstName': claims['given_name'], 'lastName': claims['family_name']});
         } else {
             console.log("Invalid Scope, 403");
             res.status(403).json({'error': 'insufficient_scope'}); 

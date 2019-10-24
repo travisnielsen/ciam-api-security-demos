@@ -1,0 +1,39 @@
+@startuml api-gateway-apim-as-token-provider
+
+autonumber
+hide footbox
+title API Gateway w/ APIM as token provider
+
+participant Client
+participant APIM #lightGreen
+participant "Authorization Server"
+participant "Consent Service"
+participant "API A"
+participant "APIM OIDC Metadata" #lightGreen
+
+Client -> APIM: call /service/api-a\nBase JWT
+activate APIM
+APIM -> "Authorization Server": Validate JWT
+note right : OIDC metadata endpoint
+group "Consent and Info Collection"
+APIM -> APIM: Check cache
+APIM -> "Consent Service": Get scopes
+"Consent Service" --> APIM: Scopes: [scope1, scope 2]
+APIM -> APIM: Generate JWT w/ scopes
+APIM -> APIM: Add to cache
+end
+
+group "API Execution"
+APIM -> "API A": forward REST call with JWT in header
+activate "API A"
+"API A" -> "APIM OIDC Metadata": Validate bearer token
+"API A" -> "API A": Apply ACL based on scopes
+"API A" --> APIM: response data
+deactivate "API A"
+APIM -> APIM: Apply policies
+end
+
+deactivate APIM
+APIM --> Client: response data
+
+@enduml

@@ -71,7 +71,7 @@ app.get("/scopes",
         
         if (claims['scp'].split(" ").indexOf("demo.read") >= 0) {
             // hard-coded demo scopes (for now)
-            res.status(200).json({'scopes': ['green', 'blue', 'orange']});
+            res.status(200).json({'scopes': 'health.read purchases.read'});
         } else {
             console.log("Invalid Scope, 403");
             res.status(403).json({'error': 'insufficient_scope'}); 
@@ -79,6 +79,33 @@ app.get("/scopes",
     }
 );
 
+// FAKE IdP OIDC METADATA
+app.get("demoidp/.well-known/openid-configuration",
+    function (req, res) {
+        res.status(200).json(
+            {
+                "issuer": "https://nielskilab-hello.azurewebsites.net/demoidp",
+                "authorization_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/authorize",
+                "token_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/token",
+                "end_session_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/logout",
+                "jwks_uri": "https://nielskilab-hello.azurewebsites.net/demoidp/discovery/v2.0/keys"
+            }      
+            
+        );
+    }
+);
+
+app.get("demoidp/discovery/v2.0/keys",
+    function (req, res) {
+        res.status(200).json(
+            {
+                "keys": [
+                  { "kid":"JLVTwaV69VmN2cRt1O2mnceHVGTog2HBqfXnPffbCS1","nbf":1493763266,"use":"sig","kty":"RSA" }
+                ]
+            }
+        );
+    }
+);
 
 var port = process.env.PORT || 5000;
 app.listen(port, function () {
