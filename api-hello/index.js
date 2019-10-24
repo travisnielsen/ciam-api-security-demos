@@ -80,22 +80,22 @@ app.get("/scopes",
 );
 
 // FAKE IdP OIDC METADATA
-app.get("demoidp/.well-known/openid-configuration",
+app.get("/demoidp/.well-known/openid-configuration",
     function (req, res) {
         res.status(200).json(
             {
                 "issuer": "https://nielskilab-hello.azurewebsites.net/demoidp",
-                "authorization_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/authorize",
-                "token_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/token",
-                "end_session_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/v2.0/logout",
-                "jwks_uri": "https://nielskilab-hello.azurewebsites.net/demoidp/discovery/v2.0/keys"
+                "authorization_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/authorize",
+                "token_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/token",
+                "end_session_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/logout",
+                "jwks_uri": "https://nielskilab-hello.azurewebsites.net/demoidp/discovery/keys"
             }      
             
         );
     }
 );
 
-app.get("demoidp/discovery/v2.0/keys",
+app.get("/demoidp/discovery/keys",
     function (req, res) {
         res.status(200).json(
             {
