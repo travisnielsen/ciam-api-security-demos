@@ -36,6 +36,12 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.get("/",
+    function (req, res) {
+        res.status(200).json({'data': 'hello!'});
+    }
+);
+
 app.get("/health",
     passport.authenticate('oauth-bearer', {session: false}),
     function (req, res) {
