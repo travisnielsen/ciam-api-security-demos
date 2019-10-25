@@ -9,7 +9,7 @@ var BearerStrategy = require('passport-azure-ad').BearerStrategy;
 var clientID = "b942470e-4b84-4160-bdf5-41355af9a41a";
 
 var options = {
-    identityMetadata: "https://nielskilab-hello.azurewebsites.net/demoidp/.well-known/openid-configuration/",
+    identityMetadata: "https://nielskilab-hello.azurewebsites.net/demoidp/v2.0/.well-known/openid-configuration/",
     clientID: clientID,
     isB2C: false,
     validateIssuer: true,

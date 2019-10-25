@@ -80,7 +80,7 @@ app.get("/scopes",
 );
 
 // FAKE IdP OIDC METADATA
-app.get("/demoidp/.well-known/openid-configuration",
+app.get("/demoidp/v2.0/.well-known/openid-configuration",
     function (req, res) {
         res.status(200).json(
             {
@@ -88,14 +88,52 @@ app.get("/demoidp/.well-known/openid-configuration",
                 "authorization_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/authorize",
                 "token_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/token",
                 "end_session_endpoint": "https://nielskilab-hello.azurewebsites.net/demoidp/oauth2/logout",
-                "jwks_uri": "https://nielskilab-hello.azurewebsites.net/demoidp/discovery/keys"
-            }      
-            
+                "jwks_uri": "https://nielskilab-hello.azurewebsites.net/demoidp/discovery/v2.0/keys",
+                "response_types_supported": [
+                    "code",
+                    "code id_token",
+                    "code token",
+                    "code id_token token",
+                    "id_token",
+                    "id_token token",
+                    "token",
+                    "token id_token"
+                  ],
+                  "scopes_supported": [
+                    "openid"
+                  ],
+                  "subject_types_supported": [
+                    "pairwise"
+                  ],
+                  "id_token_signing_alg_values_supported": [
+                    "RS256"
+                  ],
+                  "token_endpoint_auth_methods_supported": [
+                    "client_secret_post",
+                    "client_secret_basic"
+                  ],
+                  "claims_supported": [
+                    "idp",
+                    "family_name",
+                    "given_name",
+                    "emails",
+                    "city",
+                    "sub",
+                    "tfp",
+                    "iss",
+                    "iat",
+                    "exp",
+                    "aud",
+                    "acr",
+                    "nonce",
+                    "auth_time"
+                  ]
+            }
         );
     }
 );
 
-app.get("/demoidp/discovery/keys",
+app.get("/demoidp/discovery/v2.0/keys",
     function (req, res) {
         res.status(200).json(
             {
