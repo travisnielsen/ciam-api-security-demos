@@ -14,10 +14,16 @@ namespace SignJwt
 
         public static void Main(string[] args)
         {
-            string scopes = @"{'scopes': 'green blue red '}";
-            JObject a = JObject.Parse(scopes);
-            Console.WriteLine(a.GetValue("scopes"));
+            // string scopes = @"{'scopes': 'green blue red '}";
+            string scopes = @"\""health.read purchases.read\""";
+            Console.WriteLine(scopes);
+            string newScopes = scopes.Replace("\\", "").Replace("\"", "");
+            Console.WriteLine(newScopes);
 
+            // JObject a = JObject.Parse(scopes);
+            // Console.WriteLine(a.GetValue("scopes"));
+
+            /*
             string sampleToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsifQ.eyJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vZWQ0ZWY3NDQtMjU2Yi00ZjQ2LWIwY2ItODQyNmY0YTliZjQ4L3YyLjAvIiwiZXhwIjoxNTcxNjkyMzY4LCJuYmYiOjE1NzE2ODg3NjgsImF1ZCI6IjcwNjNmMDNmLWQzNzQtNGNkZS04YTg0LTQ1ZDE0ZGE3NjIzNyIsInN1YiI6IjE4NTlkZWIzLTUxNDgtNDdmZS1hMDNmLTA2OGZiODRkNmY3NiIsImdpdmVuX25hbWUiOiJUcmV2b3IiLCJmYW1pbHlfbmFtZSI6Ik5pZWxza2kiLCJlbWFpbHMiOlsidHJuQG5pZWxza2kuY29tIl0sInRmcCI6IkIyQ18xX3NvY2lhbC1yZWFjdCIsIm5vbmNlIjoiOGQ3ZjNlMzUtZTI3Zi00OWM5LWFiMmItZmQzNWYxNGQxODZiIiwic2NwIjoiZGVtby5yZWFkIiwiYXpwIjoiOGI4MTA1NjMtODM3Yi00NzcyLTk1OGEtOWQxNjY2YjBhOTE2IiwidmVyIjoiMS4wIiwiaWF0IjoxNTcxNjg4NzY4fQ.UIdw9sA8mSTb3fL8AopwymtCgMA93eOddEOj7YSpixq555pCPMv_PD3zbnGJTH5WHjkKx5ch__8lyPtnmIovaI6MniL0wmXG_vys4IGZF11HiybOH4x4OnCXMSPPxbRbpf7kYeA6TD-fD5D3lSE1WH1pBHZWEWEXBVg9Yi36vkuTeLEv7-I2J3GOwmJRgBu3RTAaKQh85Y2SdHGZFdfHgqzhXY9eym3MDhjY92gm0mAzOe0zgN6dix9sqYmfg_iYCXsE-rqY2bLS-CheCi2JgMLb21XjRgqgB25PnHgcBmVOlOidFcJdEylMmUAhk0RMsNtaricFx75SiR9xnYfbXQ";
             var claims = sampleToken.Split('.')[1];
             // Decoding example: https://stackoverflow.com/a/47209563
@@ -38,13 +44,13 @@ namespace SignJwt
 
             string scp = Guid.NewGuid().ToString();
             Console.WriteLine(scp);
-            
+            */
 
             // Console.WriteLine(a["scopes"].ToString());
             // string stuff = JObject.Parse(scopes)["scopes"].ToString();
             // Console.WriteLine(stuff);
 
-            
+            /*
             JObject headerObj = new JObject();
             headerObj.Add("typ", "JWT");
             headerObj.Add("alg", "RS256");
@@ -69,6 +75,7 @@ namespace SignJwt
 
             var result = Sign(header, payload);
             Console.WriteLine(result);
+            */
         }
 
         private static string Sign(string header, string payload)
