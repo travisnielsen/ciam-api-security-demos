@@ -7,9 +7,16 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
+            "name": "Debug client-react",
             "url": "http://localhost:6420",
             "webRoot": "${workspaceFolder}/client-react"
-        }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug client-spa",
+            "url": "http://localhost:6420",
+            "webRoot": "${workspaceFolder}/client-spa"
+        },
     ]
 }
