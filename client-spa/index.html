@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title>Calling a Web API as a user authenticated with Msal.js app - test</title>
+  <title>AAD B2C Demo SPA</title>
   <style>
     .hidden {
       visibility: hidden
@@ -31,7 +31,8 @@
   <div>
     <div id="label">Sign-in with Microsoft Azure AD B2C</div>
     <button id="auth" onclick="login()">Login</button>
-    <button id="callApiButton" class="hidden" onclick="callApi()">Call Web API</button>
+    <button id="callApiButton" class="hidden" onclick="callApi('https://nielskilab-hello.azurewebsites.net/hello')">Call Web API</button>
+    <button id="callApimButton" class="hidden" onclick="callApi('https://trniel.azure-api.net/health')">Call APIM</button>
   </div>
 
   <pre class="response"></pre>
@@ -43,7 +44,7 @@
       // b2cScopes: ["https://nielskilab.onmicrosoft.com/hello/demo.read", "https://nielskilab.onmicrosoft.com/socialreact/user_impersonation"],
       b2cScopes: ["https://nielskilab.onmicrosoft.com/hello/demo.read"],
       // webApi: "http://localhost:5000/hello"
-      webApi: "https://nielskilab-hello.azurewebsites.net/hello"
+      webApi: "https://nielskilab-hello.azurewebsites.net/hello",
     };
   </script>
 
@@ -104,9 +105,12 @@
       label.innerText = "Hello " + userName;
       var callWebApiButton = document.getElementById('callApiButton');
       callWebApiButton.setAttribute('class', 'visible');
+      var callApimButton = document.getElementById('callApimButton');
+      callApimButton.setAttribute('class', 'visible');
     }
 
-    function callApi() {
+    function callApi(url) {
+      appConfig.webApi = url;
       var tokenRequest = {
         scopes: appConfig.b2cScopes
       }
@@ -128,7 +132,7 @@
         type: "GET",
         url: appConfig.webApi,
         headers: {
-          'Authorization': 'Bearer ' + accessToken,
+          'Authorization': 'Bearer ' + accessToken
         },
       }).done(function (data) {
         logMessage("Web APi returned:\n" + JSON.stringify(data));
