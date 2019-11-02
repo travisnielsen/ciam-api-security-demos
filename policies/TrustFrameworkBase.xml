@@ -303,36 +303,72 @@
 
       <!-- Claims for terms-of-service consent -->
       <ClaimType Id="AgreedToTermsOfService">
-          <DisplayName>Terms Of Service</DisplayName>
-          <DataType>string</DataType>
-          <UserInputType>CheckboxMultiSelect</UserInputType>
-          <Restriction>
-            <Enumeration Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." Value="v16" />
-          </Restriction>
-        </ClaimType>
+        <DisplayName>Terms Of Service</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." Value="v16" />
+        </Restriction>
+      </ClaimType>
   
-        <!--Sample: This the the attribute that is stored in Azure AD B2C on the user's object-->
-        <ClaimType Id="extension_AgreedToTermsOfService">
-          <DisplayName>This is the current business Terms of Service version</DisplayName>
-          <DataType>string</DataType>
-          <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
-        </ClaimType>
+      <!--Sample: This the the attribute that is stored in Azure AD B2C on the user's object-->
+      <ClaimType Id="extension_AgreedToTermsOfService">
+        <DisplayName>This is the current business Terms of Service version</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
+      </ClaimType>
   
-        <!--Sample: This is a claim created dynamically for logic purposes only. It is used to enforce your company's current TOS version-->
-        <ClaimType Id="policyTOSversion">
-          <DisplayName>This is the current business Terms of Service version</DisplayName>
-          <DataType>string</DataType>
-          <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
-        </ClaimType>
-  
-        <!--Sample: This is a claim created dynamically for logic purposes only. It is used to trigger an OrchestrationStep that presents a
-        TOS page to the end user during Sign-in flows only -->
-        <ClaimType Id="renewalTOSrequired">
-          <DisplayName>This variable states whether TOS requires to be renewed</DisplayName>
-          <DataType>boolean</DataType>
-          <AdminHelpText>This variable states whether TOS requires to be renewed</AdminHelpText>
-        </ClaimType>
+      <!--Sample: This is a claim created dynamically for logic purposes only. It is used to enforce your company's current TOS version-->
+      <ClaimType Id="policyTOSversion">
+        <DisplayName>This is the current business Terms of Service version</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
+      </ClaimType>
 
+      <!--Sample: This is a claim created dynamically for logic purposes only. It is used to trigger an OrchestrationStep that presents a
+      TOS page to the end user during Sign-in flows only -->
+      <ClaimType Id="renewalTOSrequired">
+        <DisplayName>This variable states whether TOS requires to be renewed</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>This variable states whether TOS requires to be renewed</AdminHelpText>
+      </ClaimType>
+
+      <!-- Sample claims for service-consent demo -->
+      <!-- Consent options in this claim are required for the service to provide the most basic function-->
+      <ClaimType Id="extension_consentRequired">
+        <DisplayName></DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="I agree to sharing my required details to do business." Value="basic" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
+      <!-- Consent options in this claim are optional, and if consented to can augment the users experience further-->
+      <ClaimType Id="extension_consentOptional">
+        <DisplayName></DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text=" I agree to sharing my name." Value="name" SelectByDefault="false" />
+          <Enumeration Text=" I agree to sharing my photo." Value="photo" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
+      <ClaimType Id="extension_currentConsent">
+        <DisplayName>Currently consented scopes</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>Currently consented scopes</AdminHelpText>
+        <UserHelpText>Currently consented scopes</UserHelpText>
+      </ClaimType>
+      
+      <ClaimType Id="newConsent">
+        <DisplayName>User first time consent</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>User first time consent</AdminHelpText>
+        <UserHelpText>User first time consent</UserHelpText>
+      </ClaimType>
+        
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -770,6 +806,9 @@
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
+
+            <!-- API scope consent -->
+            <OutputClaim ClaimTypeReferenceId="extension_currentConsent" />
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -1020,6 +1059,24 @@
             <ValidationTechnicalProfile ReferenceId="AAD-ReadTOS" />
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <!-- service-consent demo -->
+        <!-- write the current time to the consent attribute if the user reconsents to TOU on sign in -->
+        <TechnicalProfile Id="AAD-UserWriteConsentUsingObjectId">
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="objectId" />
+            <PersistedClaim ClaimTypeReferenceId="extension_currentConsent"/>
+          </PersistedClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
 
         <!-- Modifiction to support consent to Terms of Use -->

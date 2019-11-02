@@ -1,13 +1,13 @@
 <TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" 
-TenantId="nielskilab.onmicrosoft.com" PolicyId="B2C_1A_Consent_Edit" 
-PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_Consent_Edit" TenantObjectId="nielskilab.onmicrosoft.com">
+TenantId="nielskilab.onmicrosoft.com" PolicyId="B2C_1A_ProfileEdit" 
+PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObjectId="nielskilab.onmicrosoft.com">
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_TrustFrameworkExtensions_Consent</PolicyId>
+    <PolicyId>B2C_1A_TrustFrameworkExtensions</PolicyId>
   </BasePolicy>
   <RelyingParty>
-    <DefaultUserJourney ReferenceId="UpdateConsent" />
+    <DefaultUserJourney ReferenceId="ProfileEdit" />
     <TechnicalProfile Id="PolicyProfile">
       <DisplayName>PolicyProfile</DisplayName>
       <Protocol Name="OpenIdConnect" />
