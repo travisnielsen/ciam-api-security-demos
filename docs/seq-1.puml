@@ -2,20 +2,26 @@
 
 autonumber
 hide footbox
-title API Gateway w/ APIM as token provider
+title API Gateway w/ APIM as token provider for back-end services
 
 participant Client
+participant B2C
 participant APIM #lightGreen
-participant "Authorization Server"
 participant "Consent Service"
 participant "API A"
 participant "APIM OIDC Metadata" #lightGreen
 
+Client -> B2C: reqeust token for api-a
+activate B2C
+B2C -> B2C: authenticate user
+B2C --> Client: api-a JWT
+deactivate
 Client -> APIM: call /service/api-a\nBase JWT
 activate APIM
-APIM -> "Authorization Server": Validate JWT
-note right : OIDC metadata endpoint
+APIM -> B2C: Validate JWT
+note left : OIDC metadata endpoint
 group "Consent and Info Collection"
+
 APIM -> APIM: Check cache
 APIM -> "Consent Service": Get scopes
 "Consent Service" --> APIM: Scopes: [scope1, scope 2]

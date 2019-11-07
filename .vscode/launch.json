@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Debug client-react",
-            "url": "http://localhost:6420",
+            "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}/client-react"
         },
         {

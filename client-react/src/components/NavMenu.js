@@ -47,7 +47,7 @@ export default class NavMenu extends React.Component {
                           <React.Fragment>
                             <div class="btn-group">
                               <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {accountInfo.account.idToken.given_name}
+                                {accountInfo.account.idToken.given_name} {accountInfo.account.idToken.family_name}
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
                                 <button class="dropdown-item" type="button">Edit Profile</button>
