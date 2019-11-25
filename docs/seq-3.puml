@@ -1,0 +1,38 @@
+@startuml api-gateway-apim-as-token-provider
+
+autonumber
+hide footbox
+title API Gateway w/ User and backend token providers
+
+participant Client
+participant B2C #LightGreen
+participant APIM 
+participant "API A"
+participant "AAD" #LightBlue
+
+Client -> B2C: request token for API A
+B2C --> Client: <back:lightGreen>**User JWT**</back> with claims
+Client -> APIM: call /service/api-a\n<back:lightGreen>**User JWT**</back>
+activate APIM
+APIM -> B2C: Validate JWT
+note left : OIDC metadata endpoint
+
+APIM -> AAD: req access token for API A (client credentials)
+activate AAD
+AAD -> AAD: Get scope assignments
+AAD ---> APIM: access token w/ API scopes
+deactivate AAD
+APIM -> APIM: set headers 
+APIM -> APIM: cache tokens
+
+APIM -> "API A": Set headers:\n<back:lightGreen>**User JWT**</back>\n<back:lightBlue>**APIM JWT**</back>
+activate "API A"
+"API A" -> "API A": Authorize API call based from <back:lightBlue>**APIM JWT**</back>
+"API A" -> "API A": Filter data and log based on <back:lightGreen>**User JWT**</back>
+"API A" --> APIM: response data
+deactivate "API A"
+
+deactivate APIM
+APIM --> Client: response data
+
+@enduml
