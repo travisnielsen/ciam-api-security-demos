@@ -134,6 +134,52 @@
         </TechnicalProfiles>
       </ClaimsProvider>
 
+      <!--Generic OIDC sign-in - Fabrikam -->
+      <ClaimsProvider>
+        <DisplayName>Fabrikam</DisplayName>
+        <TechnicalProfiles>
+          <TechnicalProfile Id="Fabrikam-OAUTH">
+            <DisplayName>Fabrikam</DisplayName>
+            <Description>Login with your Fabrikam account</Description>
+            <Protocol Name="OpenIdConnect" />
+            <Metadata>
+              <Item Key="ProviderName">https://fabrikam-idsvr.azurewebsites.net</Item>
+              <Item Key="METADATA">https://fabrikam-idsvr.azurewebsites.net/.well-known/openid-configuration</Item>
+              <Item Key="IdTokenAudience">nielskib2c</Item>
+              <Item Key="response_types">code</Item>
+              <Item Key="response_mode">form_post</Item>
+              <Item Key="UsePolicyInRedirectUri">0</Item>
+              <Item Key="client_id">nielskib2c</Item>
+              <Item Key="scope">openid</Item>
+              <Item Key="HttpBinding">POST</Item>
+            </Metadata>
+            <CryptographicKeys>
+              <Key Id="client_secret" StorageReferenceId="B2C_1A_ContosoSecret" />
+            </CryptographicKeys>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="sub" />
+              <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+              <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
+              <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+              <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="Fabrikam.com" />
+              <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" />
+
+              <!-- Supports consent to Terms of Service-->
+              <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" Required="true" />
+              <!--Sample: This is set to "false" by default to bypass OrchestrationStep 4 during Sign-in-->
+              <OutputClaim ClaimTypeReferenceId="renewalTOSrequired" DefaultValue="false" />
+            </OutputClaims>
+            <OutputClaimsTransformations>
+              <OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+              <OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+              <OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+              <OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+            </OutputClaimsTransformations>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialLogin" />
+          </TechnicalProfile>
+        </TechnicalProfiles>
+      </ClaimsProvider>
+
     <!-- Sample claims for service-consent demo -->
     <ClaimsProvider>
       <!-- Page that prompts for consent-->
@@ -178,6 +224,7 @@
               <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
               <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
               <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
+              <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
             </ClaimsProviderSelections>
             <ClaimsExchanges>
               <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
@@ -196,6 +243,7 @@
               <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
               <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
               <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
+              <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
             </ClaimsExchanges>
           </OrchestrationStep>
   
@@ -328,6 +376,7 @@
               <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
               <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
               <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
+              <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
             </ClaimsProviderSelections>
           </OrchestrationStep>
   
@@ -336,6 +385,7 @@
               <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
               <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
               <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
+              <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
             </ClaimsExchanges>
           </OrchestrationStep>
   
