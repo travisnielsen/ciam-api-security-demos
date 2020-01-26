@@ -15,23 +15,7 @@
   
   <BuildingBlocks>
     <ClaimsTransformations>
-
-      <!-- Sample claims for service-consent demo -->
-      <ClaimsTransformation Id="MergeRequiredAndOptionalConsentRequest" TransformationMethod="FormatStringMultipleClaims">
-        <InputClaims>
-          <InputClaim ClaimTypeReferenceId="extension_consentRequired" TransformationClaimType="inputClaim1" />
-          <InputClaim ClaimTypeReferenceId="extension_consentOptional" TransformationClaimType="inputClaim2" />
-        </InputClaims>
-        <InputParameters>
-          <InputParameter Id="stringFormat" DataType="string" Value="{0},{1}" />
-        </InputParameters>
-        <OutputClaims>
-          <OutputClaim ClaimTypeReferenceId="extension_currentConsent" TransformationClaimType="outputClaim" />
-        </OutputClaims>
-      </ClaimsTransformation>
-
     </ClaimsTransformations>
-
   </BuildingBlocks>
 
   <ClaimsProviders>
@@ -49,6 +33,29 @@
             <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="5e576c3e-c5e5-4700-a811-76603063a1f2" />
           </InputClaims>
         </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>
+        
+      </DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SocialAccount-Unlink">
+          <DisplayName>Unlink Social account</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="ClaimTypeOnWhichToEnable">issuers</Item>
+            </Metadata>    
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="issuerToUnlink" DefaultValue="" AlwaysUseDefaultValue="true" />
+          </OutputClaims>                
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="RemoveUserIdentityFromCollectionByIssuer" />
+          </OutputClaimsTransformations>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+          <EnabledForUserJourneys>OnItemExistenceInStringCollectionClaim</EnabledForUserJourneys>
+        </TechnicalProfile>  
       </TechnicalProfiles>
     </ClaimsProvider>
 
@@ -84,6 +91,37 @@
             <Key Id="client_secret" StorageReferenceId="B2C_1A_GoogleSecret" />
           </CryptographicKeys>
         </TechnicalProfile>
+
+        <TechnicalProfile Id="Google-OAUTH-Link">
+          <DisplayName>Link Google</DisplayName>
+            <Metadata>
+              <Item Key="ClaimTypeOnWhichToEnable">issuers</Item>
+              <Item Key="ClaimValueOnWhichToEnable">google.com</Item>
+            </Metadata>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="issuerUserIdToLink" PartnerClaimType="id" />
+              <OutputClaim ClaimTypeReferenceId="issuerToLink" DefaultValue="google.com" AlwaysUseDefaultValue="true" />
+            </OutputClaims>
+            <OutputClaimsTransformations>
+                <OutputClaimsTransformation ReferenceId="CreateUserIdentityToLink" />
+                <OutputClaimsTransformation ReferenceId="AppendUserIdentityToLink" />
+            </OutputClaimsTransformations>
+            <IncludeTechnicalProfile ReferenceId="Google-OAUTH" />
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+            <EnabledForUserJourneys>OnItemAbsenceInStringCollectionClaim</EnabledForUserJourneys>
+          </TechnicalProfile>
+  
+          <TechnicalProfile Id="Google-Unlink">
+            <DisplayName>Unlink Google</DisplayName>
+              <Metadata>
+                <Item Key="ClaimValueOnWhichToEnable">google.com</Item>
+              </Metadata>        
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="issuerToUnlink" DefaultValue="google.com" AlwaysUseDefaultValue="true" />
+            </OutputClaims>
+            <IncludeTechnicalProfile ReferenceId="SocialAccount-Unlink" />
+          </TechnicalProfile>             
+
       </TechnicalProfiles>
     </ClaimsProvider>
 
@@ -189,7 +227,8 @@
           <DisplayName>Self Asserted ToU</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <!-- <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item> -->
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
             <Item Key="AllowGenerationOfClaimsWithNullValues">true</Item>
           </Metadata>
           <CryptographicKeys>
@@ -215,232 +254,7 @@
       
   </ClaimsProviders>
 
-  <UserJourneys>
-      <UserJourney Id="SignUpOrSignIn">
-        <OrchestrationSteps>
-        
-          <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
-            <ClaimsProviderSelections>
-              <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
-            </ClaimsProviderSelections>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- Check if the user has selected to sign in using one of the social providers -->
-          <OrchestrationStep Order="2" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
-                <Value>objectId</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
-              <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
-              <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
-              <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- For social IDP authentication, attempt to find the user account in the directory. -->
-          <OrchestrationStep Order="3" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>localAccountAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserReadUsingAlternativeSecurityId" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId-NoError" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- Show self-asserted page only if the directory does not have the user account already (i.e. we do not have an objectId). 
-            This can only happen when authentication happened using a social IDP. If local account was created or authentication done
-            using ESTS in step 2, then an user account must exist in the directory by this time. -->
-          <OrchestrationStep Order="4" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
-                <Value>objectId</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="SelfAsserted-Social" TechnicalProfileReferenceId="SelfAsserted-Social" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- This step reads any user attributes that we may not have received when authenticating using ESTS so they can be sent 
-            in the token. -->
-          <OrchestrationStep Order="5" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>socialIdpAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-  
-          <!--Sample: Will redirect user to a TOS acceptance page if earlier claim transformation has determined required -->
-          <OrchestrationStep Order="6" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>renewalTOSrequired</Value>
-                <Value>False</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-
-            </Preconditions>
-
-            <ClaimsExchanges>
-                <ClaimsExchange Id="RefreshTOS" TechnicalProfileReferenceId="SelfAsserted-RefreshTOS" />
-            </ClaimsExchanges>
-
-          </OrchestrationStep>
-
-          <!-- API scope consent -->
-          <OrchestrationStep Order="7" Type="ClaimsExchange">
-              <Preconditions>
-                <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
-                  <Value>extension_currentConsent</Value>
-                  <Action>SkipThisOrchestrationStep</Action>
-                </Precondition>
-  
-              </Preconditions>
-  
-              <ClaimsExchanges>
-                  <ClaimsExchange Id="ShowToUConsentPageForNewUser" TechnicalProfileReferenceId="SelfAsserted-Consent-Page" />
-              </ClaimsExchanges>
-  
-            </OrchestrationStep>
-
-          <!--Sample: This steps reads the directory again to refresh the variable of the TOS stored on the user object. If you do not plan
-          on sending the TOS version in a claim to the application, you can remove this step.-->
-          <OrchestrationStep Order="8" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AAD-ReadTOS" TechnicalProfileReferenceId="AAD-ReadTOS" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- The previous step (SelfAsserted-Social) could have been skipped if there were no attributes to collect 
-               from the user. So, in that case, create the user in the directory if one does not already exist 
-               (verified using objectId which would be set from the last step if account was created in the directory. -->
-          <OrchestrationStep Order="9" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
-                <Value>objectId</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserWrite" TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- API scope consent -->
-          <!-- Write the current consent to the user object if they ran through SelfAsserted-Consent-Page-->
-          <OrchestrationStep Order="10" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                <Value>newConsent</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserWriteConsent" TechnicalProfileReferenceId="AAD-UserWriteConsentUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-   
-          <OrchestrationStep Order="11" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-   
-        </OrchestrationSteps>
-        <ClientDefinition ReferenceId="DefaultWeb" />
-      </UserJourney>
-  
-      <UserJourney Id="ProfileEdit">
-        <OrchestrationSteps>
-        
-          <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections">
-            <ClaimsProviderSelections>
-              <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
-            </ClaimsProviderSelections>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="2" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
-              <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
-              <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
-              <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="3" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>localAccountAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserRead" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="4" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>socialIdpAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="5" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="B2CUserProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted-ProfileUpdate" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- API scope consent -->
-          <OrchestrationStep Order="6" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="ShowToUConsentPageForNewUser" TechnicalProfileReferenceId="SelfAsserted-Consent-Page" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-    
-          <!-- API scope consent -->
-          <OrchestrationStep Order="7" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserWriteConsent" TechnicalProfileReferenceId="AAD-UserWriteConsentUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-   
-        </OrchestrationSteps>
-        <ClientDefinition ReferenceId="DefaultWeb" />
-      </UserJourney>
-  
+  <UserJourneys>  
       <UserJourney Id="PasswordReset">
         <OrchestrationSteps>
           <OrchestrationStep Order="1" Type="ClaimsExchange">
@@ -457,10 +271,6 @@
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />
       </UserJourney>
-   
     </UserJourneys>
-
-
-
 
 </TrustFrameworkPolicy>

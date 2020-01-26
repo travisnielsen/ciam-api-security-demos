@@ -7,6 +7,7 @@ import './NavMenu.css';
 import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 import { authProvider } from '../authProvider';
 import store from '../store/store';
+// import { openProfile } from 'profile';
 
 export default class NavMenu extends React.Component {
   constructor (props) {
@@ -18,12 +19,14 @@ export default class NavMenu extends React.Component {
     };
 
     authProvider.setLoginType(LoginType.Popup);
+
   }
   toggle () {
     this.setState({
       isOpen: !this.state.isOpen
     });
   }
+
   render () {
     return (
       <header>
@@ -41,7 +44,7 @@ export default class NavMenu extends React.Component {
                 </NavItem>
                 <AzureAD provider={authProvider} reduxStore={store}>
                   {
-                    ({login, logout, authenticationState, accountInfo}) => {
+                    ({login, logout, authenticationState, accountInfo }) => {
                       if (authenticationState === AuthenticationState.Authenticated) {
                         return (
                           <React.Fragment>
@@ -50,7 +53,9 @@ export default class NavMenu extends React.Component {
                                 {accountInfo.account.idToken.given_name} {accountInfo.account.idToken.family_name}
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button">Edit Profile</button>
+                                <NavItem>
+                                  <NavLink tag={Link} className="dropdown-item" to="/profile">Profile</NavLink>
+                                </NavItem>
                                 <div class="dropdown-divider"></div>
                                 <button onClick={logout} className="dropdown-item" type="button">Sign Out</button>
                               </div>

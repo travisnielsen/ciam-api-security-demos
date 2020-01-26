@@ -16,6 +16,196 @@
   <BuildingBlocks>    
   </BuildingBlocks>
 
+  <UserJourneys>
+    <UserJourney Id="SignUpOrSignIn">
+      <OrchestrationSteps>
+      
+        <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+          <ClaimsProviderSelections>
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
+          </ClaimsProviderSelections>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Check if the user has selected to sign in using one of the social providers -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+            <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
+            <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
+            <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- For social IDP authentication, attempt to find the user account in the directory. -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>localAccountAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadUsingAlternativeSecurityId" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId-NoError" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Show self-asserted page only if the directory does not have the user account already (i.e. we do not have an objectId). 
+          This can only happen when authentication happened using a social IDP. If local account was created or authentication done
+          using ESTS in step 2, then an user account must exist in the directory by this time. -->
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAsserted-Social-v2" TechnicalProfileReferenceId="SelfAsserted-Social-v2" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- This step reads any user attributes that we may not have received when authenticating using ESTS so they can be sent 
+          in the token. -->
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>socialIdpAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+
+        <!--Sample: Will redirect user to a TOS acceptance page if earlier claim transformation has determined required -->
+        <OrchestrationStep Order="6" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>renewalTOSrequired</Value>
+              <Value>False</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+              <ClaimsExchange Id="RefreshTOS" TechnicalProfileReferenceId="SelfAsserted-RefreshTOS" />
+          </ClaimsExchanges>
+
+        </OrchestrationStep>
+
+        <!-- API scope consent -->
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
+            <Preconditions>
+              <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                <Value>extension_currentConsent</Value>
+                <Action>SkipThisOrchestrationStep</Action>
+              </Precondition>
+            </Preconditions>
+            <ClaimsExchanges>
+                <ClaimsExchange Id="ShowToUConsentPageForNewUser" TechnicalProfileReferenceId="SelfAsserted-Consent-Page" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
+
+        <!--Sample: This steps reads the directory again to refresh the variable of the TOS stored on the user object. If you do not plan
+        on sending the TOS version in a claim to the application, you can remove this step.-->
+        <OrchestrationStep Order="8" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AAD-ReadTOS" TechnicalProfileReferenceId="AAD-ReadTOS" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- The previous step (SelfAsserted-Social) could have been skipped if there were no attributes to collect 
+             from the user. So, in that case, create the user in the directory if one does not already exist 
+             (verified using objectId which would be set from the last step if account was created in the directory. -->
+        <OrchestrationStep Order="9" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserWrite" TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- API scope consent -->
+        <!-- Write the current consent to the user object if they ran through SelfAsserted-Consent-Page-->
+        <OrchestrationStep Order="10" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>newConsent</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserWriteConsent" TechnicalProfileReferenceId="AAD-UserWriteConsentUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!--Sample: Displays the sign-in the social account buttons.-->
+        <OrchestrationStep Order="11" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
+          <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
+            <ClaimsProviderSelection TargetClaimsExchangeId="LinkGoogleExchange"/>
+          </ClaimsProviderSelections>
+        </OrchestrationStep>
+
+        <!-- Sample: Redirect the user to the selected social provider, to complete the sign-in and link the new account -->
+        <OrchestrationStep Order="12" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LinkGoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-Link"/>
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Sample: Attempt to find the second user account in the directory. -->
+        <OrchestrationStep Order="13" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AAADUserReadUsingUserIdentityToLink" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentityToLink-NoError"/>
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Sample: Check whether the user not existed in the directory -->
+        <OrchestrationStep Order="14" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>objectIdToLink</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAssertedError" TechnicalProfileReferenceId="SelfAsserted-Error" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Sample: Link the new social account. -->
+        <OrchestrationStep Order="15" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="UpdateUserIdentities" TechnicalProfileReferenceId="AAD-UserUpdateWithUserIdentities"/>
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="16" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+ 
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+  </UserJourneys>
+
   <RelyingParty>
       <DefaultUserJourney ReferenceId="SignUpOrSignIn" />
       <TechnicalProfile Id="PolicyProfile">

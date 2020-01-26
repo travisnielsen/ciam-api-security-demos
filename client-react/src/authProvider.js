@@ -33,7 +33,7 @@ export const authProvider = new MsalAuthProvider(
     auth: {
       // authority: process.env.REACT_APP_AUTHORITY,
       // clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-      authority: 'https://login.microsoftonline.com/tfp/nielskilab.onmicrosoft.com/B2C_1A_SUSI',
+      authority: 'https://nielskilab.b2clogin.com/tfp/nielskilab.onmicrosoft.com/B2C_1A_SUSI',
       clientId: '48abf88d-b255-43f3-9e46-4f6342c65f3e',
       postLogoutRedirectUri: window.location.origin,
       redirectUri: window.location.origin,
