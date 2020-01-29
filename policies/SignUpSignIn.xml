@@ -278,6 +278,7 @@
           <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
           <OutputClaim ClaimTypeReferenceId="identityProvider" />
           <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+          <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
 
           <!-- Added for service consent demo -->
           <OutputClaim ClaimTypeReferenceId="extension_currentConsent" PartnerClaimType="scope" />

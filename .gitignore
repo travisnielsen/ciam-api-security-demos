@@ -42,3 +42,14 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+/tools/NuGet.exe
+/App_Data
+/secrets
+/data
+.secrets
+appsettings.json
+local.settings.json
+
+node_modules
+dist

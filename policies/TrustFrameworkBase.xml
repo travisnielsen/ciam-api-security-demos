@@ -441,6 +441,12 @@
         <UserHelpText>User identity providers. This information is received from alternativeSecurityIds</UserHelpText>
       </ClaimType>
 
+      <!-- for group membership demo -->
+      <ClaimType Id="groups">
+        <DisplayName>groups</DisplayName>
+        <DataType>stringCollection</DataType>
+      </ClaimType>
+
         
     </ClaimsSchema>
 
@@ -1379,6 +1385,9 @@
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surName" />
 
+            <!--Demo: Add the groups claim type to the output claim collection-->
+            <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
+
             <!-- Supports consent to Terms of Service-->
             <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" Required="true" />
             <!--Sample: This is set to "false" by default to bypass OrchestrationStep 4 during Sign-in-->
@@ -1412,6 +1421,10 @@
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
             <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" /> <!-- Modifiction to support consent to Terms of Use -->
+
+            <!--Demo: Add the groups claim type to the output claim collection-->
+            <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
+
           </OutputClaims>
           <OutputClaimsTransformations>
               <!--Sample: IsTermsOfServiceRequired Outputs a boolean check to compare whether renewal is required by 
