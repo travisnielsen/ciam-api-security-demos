@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using GroupsApiB2C.Models;
 
 namespace GroupsApiB2C
 {
@@ -26,6 +27,9 @@ namespace GroupsApiB2C
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Demo: Load the app settings section and bind to AppSettingsModel object graph
+            services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +40,7 @@ namespace GroupsApiB2C
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

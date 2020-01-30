@@ -66,7 +66,7 @@ namespace GroupsApiB2C
         private async Task<string> SendGraphRequest(string api, string query, string data, HttpMethod method)
         {
             // Get the access toke to Graph API
-            string acceeToken = await AcquireAccessToken();
+            string accessToken = await AcquireAccessToken();
 
             // Set the Graph url. Including: Graph-endpoint/tenat/users?api-version&query
             string url = $"{this.aadGraphEndpoint}{this.Tenant}{api}?{this.aadGraphVersion}";
@@ -82,7 +82,7 @@ namespace GroupsApiB2C
                 using (HttpRequestMessage request = new HttpRequestMessage(method, url))
                 {
                     // Set the authorization header
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", acceeToken);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                     // For POST and PATCH set the request content 
                     if (!string.IsNullOrEmpty(data))
@@ -99,6 +99,8 @@ namespace GroupsApiB2C
                         // Check the result for error
                         if (!response.IsSuccessStatusCode)
                         {
+                            Console.WriteLine("Error: " + error);
+
                             // Throw server busy error message
                             if (response.StatusCode == (HttpStatusCode)429)
                             {
@@ -122,7 +124,6 @@ namespace GroupsApiB2C
 
         private async Task<string> AcquireAccessToken()
         {
-
             AzureADGraphClient.AccessToken = await authContext.AcquireTokenAsync(this.aadGraphResourceId, credential);
 
             // If the access token is null or about to be invalid, acquire new one
