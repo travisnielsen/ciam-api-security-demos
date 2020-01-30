@@ -7,6 +7,7 @@
   TenantId="nielskilab.onmicrosoft.com"
   PolicyId="B2C_1A_SUSI"
   PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_SUSI">
+  Allow
 
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
@@ -278,7 +279,7 @@
           <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
           <OutputClaim ClaimTypeReferenceId="identityProvider" />
           <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
-          <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
+          <OutputClaim ClaimTypeReferenceId="groups" />
 
           <!-- Added for service consent demo -->
           <OutputClaim ClaimTypeReferenceId="extension_currentConsent" PartnerClaimType="scope" />

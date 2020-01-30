@@ -447,6 +447,12 @@
         <DataType>stringCollection</DataType>
       </ClaimType>
 
+      <ClaimType Id="onlyMembersOf">
+        <DisplayName>onlyMembersOf</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <!-- END for group membership demo -->
+
         
     </ClaimsSchema>
 
@@ -1386,7 +1392,7 @@
             <OutputClaim ClaimTypeReferenceId="surName" />
 
             <!--Demo: Add the groups claim type to the output claim collection-->
-            <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
+            <OutputClaim ClaimTypeReferenceId="groups" />
 
             <!-- Supports consent to Terms of Service-->
             <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" Required="true" />
@@ -1423,7 +1429,7 @@
             <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" /> <!-- Modifiction to support consent to Terms of Use -->
 
             <!--Demo: Add the groups claim type to the output claim collection-->
-            <!-- <OutputClaim ClaimTypeReferenceId="groups" /> -->
+            <OutputClaim ClaimTypeReferenceId="groups" />
 
           </OutputClaims>
           <OutputClaimsTransformations>
@@ -1435,6 +1441,8 @@
             <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
             <!--Sample: AAD-ReadTOS Reads Azure AD B2C directory and pulls the user's last accepted TOS version (extension_AgreedToTermsOfService)-->
             <ValidationTechnicalProfile ReferenceId="AAD-ReadTOS" />
+            <!-- for group membership demo -->
+            <ValidationTechnicalProfile ReferenceId="REST-RBAC" />
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
@@ -1636,6 +1644,36 @@
       </TechnicalProfiles>
     </ClaimsProvider>
 
+    <!-- Demo: Technical profile to read and validate user's groups-->
+    <ClaimsProvider>
+      <DisplayName>REST APIs</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="REST-RBAC">
+          <DisplayName>Read and validate user's groups</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <!--Demo: Change the service URL with your REST API location-->
+            <Item Key="ServiceUrl">https://trniel-graphclient.azurewebsites.net/api/Identity/IsMemberOf</Item>
+            
+            <!--Demo: Change the AuthenticationType to basic or ClientCertificate.
+            For more information, see: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-custom-rest-api-netfw-secure-cert-->
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" />
+            <!--Demo: set the DefaultValue to empty string or comma delimiter list 
+            of security groups to validate-->
+            <!-- <InputClaim ClaimTypeReferenceId="onlyMembersOf" DefaultValue="admins" /> -->
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="groups" />
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
 
   </ClaimsProviders>
 
