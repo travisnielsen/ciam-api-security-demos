@@ -7,7 +7,6 @@ import './NavMenu.css';
 import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 import { authProvider } from '../authProvider';
 import store from '../store/store';
-// import { openProfile } from 'profile';
 
 export default class NavMenu extends React.Component {
   constructor (props) {
@@ -25,6 +24,15 @@ export default class NavMenu extends React.Component {
     this.setState({
       isOpen: !this.state.isOpen
     });
+  }
+
+  editProfile() {
+    authProvider.setLoginType(LoginType.Redirect);
+    var authParams = authProvider.getAuthenticationParameters();
+    authParams.authority = "https://nielskilab.b2clogin.com/tfp/nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit";
+    authProvider.setAuthenticationParameters(authParams);
+    authProvider.login();
+    authParams.authority = "https://nielskilab.b2clogin.com/tfp/nielskilab.onmicrosoft.com/B2C_1A_SUSI'";
   }
 
   render () {
@@ -53,9 +61,7 @@ export default class NavMenu extends React.Component {
                                 {accountInfo.account.idToken.given_name} {accountInfo.account.idToken.family_name}
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <NavItem>
-                                  <NavLink tag={Link} className="dropdown-item" to="/profile">Profile</NavLink>
-                                </NavItem>
+                                <button onClick={this.editProfile} className="dropdown-item" type="button">Profile</button>
                                 <div class="dropdown-divider"></div>
                                 <button onClick={logout} className="dropdown-item" type="button">Sign Out</button>
                               </div>

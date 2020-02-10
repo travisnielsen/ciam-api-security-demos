@@ -109,18 +109,18 @@
             <IncludeTechnicalProfile ReferenceId="Google-OAUTH" />
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
             <EnabledForUserJourneys>OnItemAbsenceInStringCollectionClaim</EnabledForUserJourneys>
-          </TechnicalProfile>
+        </TechnicalProfile>
   
-          <TechnicalProfile Id="Google-Unlink">
-            <DisplayName>Unlink Google</DisplayName>
-              <Metadata>
-                <Item Key="ClaimValueOnWhichToEnable">google.com</Item>
-              </Metadata>        
-            <OutputClaims>
-              <OutputClaim ClaimTypeReferenceId="issuerToUnlink" DefaultValue="google.com" AlwaysUseDefaultValue="true" />
-            </OutputClaims>
-            <IncludeTechnicalProfile ReferenceId="SocialAccount-Unlink" />
-          </TechnicalProfile>             
+        <TechnicalProfile Id="Google-Unlink">
+          <DisplayName>Unlink Google</DisplayName>
+            <Metadata>
+              <Item Key="ClaimValueOnWhichToEnable">google.com</Item>
+            </Metadata>        
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="issuerToUnlink" DefaultValue="google.com" AlwaysUseDefaultValue="true" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="SocialAccount-Unlink" />
+        </TechnicalProfile>             
 
       </TechnicalProfiles>
     </ClaimsProvider>

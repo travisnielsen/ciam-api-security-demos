@@ -42,6 +42,7 @@ PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObj
             </ClaimsExchanges>
           </OrchestrationStep>
   
+          <!-- Check if the user has selected to sign in using one of the social providers -->
           <OrchestrationStep Order="4" Type="ClaimsExchange">
             <Preconditions>
               <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
@@ -74,8 +75,45 @@ PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObj
               <ClaimsExchange Id="AADUserWriteConsent" TechnicalProfileReferenceId="AAD-UserWriteConsentUsingObjectId" />
             </ClaimsExchanges>
           </OrchestrationStep>
+
+          <!-- Account Linking -->
+
+          <!-- Sample: Attempt to find the second user account in the directory. -->
+          <!--
+          <OrchestrationStep Order="8" Type="ClaimsExchange">
+            <ClaimsExchanges>
+              <ClaimsExchange Id="AAADUserReadUsingUserIdentityToLink" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentityToLink-NoError"/>
+            </ClaimsExchanges>
+          </OrchestrationStep>
+        -->
+
+          <!-- Sample: Display UI for unlinking -->
+
+          <!-- ERROR WHEN ENABLED - AADB2C90051: No suitable claims providers were found.
+          <OrchestrationStep Order="8" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
+            <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
+              <ClaimsProviderSelection TargetClaimsExchangeId="UnlinkGoogleExchange"/>
+            </ClaimsProviderSelections>
+          </OrchestrationStep>
+          -->
+
+          <!--Sample: Display social account buttons.-->
+          <OrchestrationStep Order="8" Type="ClaimsExchange">
+            <ClaimsExchanges>
+              <ClaimsExchange Id="UnlinkGoogleExchange" TechnicalProfileReferenceId="Google-Unlink"/>
+            </ClaimsExchanges>
+          </OrchestrationStep>
+
+          <!-- Sample: Update the user identities collection for the account. -->
+          <OrchestrationStep Order="9" Type="ClaimsExchange">
+            <ClaimsExchanges>
+              <ClaimsExchange Id="UpdateUserIdentities" TechnicalProfileReferenceId="AAD-UserUpdateWithUserIdentities"/>
+            </ClaimsExchanges>
+          </OrchestrationStep>
+
+          <!-- End Account Linking -->
   
-          <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+          <OrchestrationStep Order="10" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
    
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />
