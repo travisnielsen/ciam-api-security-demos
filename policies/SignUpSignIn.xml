@@ -7,7 +7,6 @@
   TenantId="nielskilab.onmicrosoft.com"
   PolicyId="B2C_1A_SUSI"
   PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_SUSI">
-  Allow
 
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>

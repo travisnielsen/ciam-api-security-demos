@@ -78,14 +78,41 @@ PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObj
 
           <!-- Account Linking -->
 
+
+          <!--Sample: Displays the sign-in the social account buttons.-->
+          <OrchestrationStep Order="8" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
+            <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
+              <ClaimsProviderSelection TargetClaimsExchangeId="LinkGoogleExchange"/>
+            </ClaimsProviderSelections>
+          </OrchestrationStep>    
+          
+          <!-- Sample: Redirect the user to the selected social provider, to complete the sign-in and link the new account -->
+          <OrchestrationStep Order="9" Type="ClaimsExchange">
+            <ClaimsExchanges>
+              <ClaimsExchange Id="LinkGoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-Link"/>
+            </ClaimsExchanges>
+          </OrchestrationStep>   
+
+
           <!-- Sample: Attempt to find the second user account in the directory. -->
-          <!--
-          <OrchestrationStep Order="8" Type="ClaimsExchange">
+          <OrchestrationStep Order="10" Type="ClaimsExchange">
             <ClaimsExchanges>
               <ClaimsExchange Id="AAADUserReadUsingUserIdentityToLink" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentityToLink-NoError"/>
             </ClaimsExchanges>
           </OrchestrationStep>
-        -->
+
+          <!-- Sample: Check whether the user not existed in the directory -->
+          <OrchestrationStep Order="11" Type="ClaimsExchange">
+            <Preconditions>
+              <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+                <Value>objectIdToLink</Value>
+                <Action>SkipThisOrchestrationStep</Action>
+              </Precondition>
+            </Preconditions>
+            <ClaimsExchanges>
+              <ClaimsExchange Id="SelfAssertedError" TechnicalProfileReferenceId="SelfAsserted-Error" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
 
           <!-- Sample: Display UI for unlinking -->
 
@@ -98,14 +125,16 @@ PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObj
           -->
 
           <!--Sample: Display social account buttons.-->
+          <!--
           <OrchestrationStep Order="8" Type="ClaimsExchange">
             <ClaimsExchanges>
               <ClaimsExchange Id="UnlinkGoogleExchange" TechnicalProfileReferenceId="Google-Unlink"/>
             </ClaimsExchanges>
           </OrchestrationStep>
+          -->
 
           <!-- Sample: Update the user identities collection for the account. -->
-          <OrchestrationStep Order="9" Type="ClaimsExchange">
+          <OrchestrationStep Order="12" Type="ClaimsExchange">
             <ClaimsExchanges>
               <ClaimsExchange Id="UpdateUserIdentities" TechnicalProfileReferenceId="AAD-UserUpdateWithUserIdentities"/>
             </ClaimsExchanges>
@@ -113,7 +142,7 @@ PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObj
 
           <!-- End Account Linking -->
   
-          <OrchestrationStep Order="10" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+          <OrchestrationStep Order="13" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
    
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />
