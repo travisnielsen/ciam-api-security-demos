@@ -5,33 +5,25 @@
   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
   PolicySchemaVersion="0.3.0.0"
   TenantId="nielskilab.onmicrosoft.com"
-  PolicyId="B2C_1A_AccountLink_Remove"
-  PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_AccountLink_Remove">
+  PolicyId="B2C_1A_SUSI"
+  PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_SUSI">
 
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_AccountLink_Extensions</PolicyId>
+    <PolicyId>B2C_1A_Extensions</PolicyId>
   </BasePolicy>
-  <ClaimsProviders>
-    <ClaimsProvider>
-      <DisplayName>Local Account</DisplayName>
-      <TechnicalProfiles>
-        <!--Sample: Remove the sign-up link-->
-        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
-          <Metadata>
-            <Item Key="setting.showSignupLink">false</Item>
-          </Metadata>
-        </TechnicalProfile>
-      </TechnicalProfiles>
-    </ClaimsProvider>
-  </ClaimsProviders>
+
+  <BuildingBlocks>    
+  </BuildingBlocks>
   
   <UserJourneys>
-    <UserJourney Id="AccountUnlink">
-      <OrchestrationSteps>    
+    <UserJourney Id="AccountLinkSignUpOrSignIn">
+      <OrchestrationSteps>
+      
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange"/>
+            <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange"/>
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange"/>
           </ClaimsProviderSelections>
           <ClaimsExchanges>
@@ -49,7 +41,8 @@
           </Preconditions>
           <ClaimsExchanges>
             <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-SignIn"/>
-            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail"/>
+            <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH-SignIn"/>
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmailCustom"/>
           </ClaimsExchanges>
         </OrchestrationStep>
 
@@ -63,13 +56,29 @@
             </Precondition>
           </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="AADUserReadUsingUserIdentity" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentity" />
+            <ClaimsExchange Id="AADUserReadUsingUserIdentity" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentity-NoError" />
+            <!-- <ClaimsExchange Id="AADUserReadUsingUserIdentity" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentity" /> -->
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Show self-asserted page only if the directory does not have the user account already (i.e. we do not have an objectId). 
+          This can only happen when authentication happened using a social IDP. If local account was created or authentication done
+          using ESTS in step 2, then an user account must exist in the directory by this time. -->
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAsserted-Social" TechnicalProfileReferenceId="SelfAsserted-Social-v2"/>
           </ClaimsExchanges>
         </OrchestrationStep>
 
         <!-- This step reads any user attributes that we may not have received when authenticating using ESTS so they can be sent 
           in the token. -->
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
               <Value>authenticationSource</Value>
@@ -82,37 +91,33 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-
-        <!--Sample: Displays the sign-in the social account buttons.-->
-        <OrchestrationStep Order="5" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
-          <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
-            <ClaimsProviderSelection TargetClaimsExchangeId="UnlinkGoogleExchange"/>
-          </ClaimsProviderSelections>
-        </OrchestrationStep>
-
-        <!-- Sample: Redirect the user to the selected social provider, to complete the sign-in and link the new account -->
+        <!-- Display Terms of Use consent page for any SignIn scenario based on termsOfUseConsentRequired claim -->
         <OrchestrationStep Order="6" Type="ClaimsExchange">
+          <Preconditions>
+            <!-- Add condition to not execute this step for sign up scenario based on newUser claim -->
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>newUser</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="false">
+              <Value>termsOfUseConsentRequired</Value>
+              <Value>True</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="UnlinkGoogleExchange" TechnicalProfileReferenceId="Google-Unlink"/>
+            <ClaimsExchange Id="ShowToUConsentPageForNewUser" TechnicalProfileReferenceId="SelfAsserted-Input-ToU-SignIn" />
           </ClaimsExchanges>
         </OrchestrationStep>
-
-        <!-- Sample: Update the account with the new user identities collection. -->
-        <OrchestrationStep Order="7" Type="ClaimsExchange">
-          <ClaimsExchanges>
-            <ClaimsExchange Id="UpdateUserIdentities" TechnicalProfileReferenceId="AAD-UserUpdateWithUserIdentities"/>
-          </ClaimsExchanges>
-        </OrchestrationStep>
-
-        <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
+ 
+        <OrchestrationStep Order="7" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
  
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb"/>
-
-   </UserJourney>
+    </UserJourney>
   </UserJourneys>
   <RelyingParty>
-    <DefaultUserJourney ReferenceId="AccountUnlink" />
+    <DefaultUserJourney ReferenceId="AccountLinkSignUpOrSignIn" />
     <TechnicalProfile Id="PolicyProfile">
       <DisplayName>PolicyProfile</DisplayName>
       <Protocol Name="OpenIdConnect" />
@@ -129,7 +134,6 @@
     </TechnicalProfile>
   </RelyingParty>
 </TrustFrameworkPolicy>
-
 
 
 

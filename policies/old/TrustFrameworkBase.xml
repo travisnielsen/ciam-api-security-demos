@@ -27,6 +27,7 @@
       <!-- SECTION I: Claims required for user journeys to work properly -->
 
       <!-- The claim socialIdpUserId has been renamed to issuerUserId -->
+      <!--
       <ClaimType Id="issuerUserId">
         <DisplayName>Username</DisplayName>
         <DataType>string</DataType>
@@ -36,6 +37,7 @@
           <Pattern RegularExpression="^[a-zA-Z0-9]+[a-zA-Z0-9_-]*$" HelpText="The username you provided is not valid. It must begin with an alphabet or number and can contain alphabets, numbers and the following symbols: _ -" />
         </Restriction>
       </ClaimType>
+    -->
 
       <ClaimType Id="tenantId">
         <DisplayName>User's Object's Tenant ID</DisplayName>
@@ -301,6 +303,157 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
+      <!-- Claims for terms-of-service consent -->
+      <ClaimType Id="AgreedToTermsOfService">
+        <DisplayName>Terms Of Service</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." Value="v16" />
+        </Restriction>
+      </ClaimType>
+  
+      <!--Sample: This the the attribute that is stored in Azure AD B2C on the user's object-->
+      <ClaimType Id="extension_AgreedToTermsOfService">
+        <DisplayName>This is the current business Terms of Service version</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
+      </ClaimType>
+  
+      <!--Sample: This is a claim created dynamically for logic purposes only. It is used to enforce your company's current TOS version-->
+      <ClaimType Id="policyTOSversion">
+        <DisplayName>This is the current business Terms of Service version</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>This is the current business Terms of Service version</AdminHelpText>
+      </ClaimType>
+
+      <!--Sample: This is a claim created dynamically for logic purposes only. It is used to trigger an OrchestrationStep that presents a
+      TOS page to the end user during Sign-in flows only -->
+      <ClaimType Id="renewalTOSrequired">
+        <DisplayName>This variable states whether TOS requires to be renewed</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>This variable states whether TOS requires to be renewed</AdminHelpText>
+      </ClaimType>
+
+      <!-- Sample claims for service-consent demo -->
+      <!-- Consent options in this claim are required for the service to provide the most basic function-->
+      <ClaimType Id="extension_consentRequired">
+        <DisplayName></DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="I agree to sharing my required details to do business." Value="basic" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
+      <!-- Consent options in this claim are optional, and if consented to can augment the users experience further-->
+      <ClaimType Id="extension_consentOptional">
+        <DisplayName></DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text=" I agree to sharing my name." Value="name" SelectByDefault="false" />
+          <Enumeration Text=" I agree to sharing my photo." Value="photo" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
+      <ClaimType Id="extension_currentConsent">
+        <DisplayName>Currently consented scopes</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>Currently consented scopes</AdminHelpText>
+        <UserHelpText>Currently consented scopes</UserHelpText>
+      </ClaimType>
+      
+      <ClaimType Id="newConsent">
+        <DisplayName>User first time consent</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>User first time consent</AdminHelpText>
+        <UserHelpText>User first time consent</UserHelpText>
+      </ClaimType>
+
+      <!-- Account Linking -->
+      <ClaimType Id="userIdentities">
+        <DisplayName>userIdentities</DisplayName>
+        <DataType>userIdentityCollection</DataType>
+        <AdminHelpText>userIdentities</AdminHelpText>
+        <UserHelpText>userIdentities</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="userIdentity">
+        <DisplayName>userIdentity</DisplayName>
+        <DataType>userIdentity</DataType>
+        <AdminHelpText>userIdentity</AdminHelpText>
+        <UserHelpText>userIdentity</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="objectIdToLink">
+        <DisplayName>objectIdToLink</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Second account user objectId</UserHelpText>
+      </ClaimType>
+
+      <!--Sample: Stores the error message if user exists-->
+      <ClaimType Id="errorMessage">
+     	  <DisplayName></DisplayName>
+     	  <DataType>string</DataType>
+        <UserHelpText>Add help text here</UserHelpText>
+     	  <UserInputType>Paragraph</UserInputType>
+      </ClaimType>  
+
+      <ClaimType Id="issuerToUnlink">
+        <DisplayName>issuerToUnlink</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>issuerToUnlink</AdminHelpText>
+        <UserHelpText>issuerToUnlink</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="issuerToLink">
+        <DisplayName>issuerToLink</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>issuerToLink</AdminHelpText>
+        <UserHelpText>issuerToLink</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="issuerUserId">
+        <DisplayName>issuerUserId</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>issuerUserId</AdminHelpText>
+        <UserHelpText>issuerUserId</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="issuerUserIdToLink">
+        <DisplayName>issuerUserIdToLink</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>issuerUserIdToLink</AdminHelpText>
+        <UserHelpText>issuerUserIdToLink</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="userIdentityToLink">
+        <DisplayName>userIdentityToLink</DisplayName>
+        <DataType>userIdentity</DataType>
+        <AdminHelpText>userIdentityToLink</AdminHelpText>
+        <UserHelpText>userIdentityToLink</UserHelpText>
+      </ClaimType>
+
+      <ClaimType Id="issuers">
+        <DisplayName>issuers</DisplayName>
+        <DataType>stringCollection</DataType>
+        <UserHelpText>User identity providers. This information is received from alternativeSecurityIds</UserHelpText>
+      </ClaimType>
+
+      <!-- for group membership demo -->
+      <ClaimType Id="groups">
+        <DisplayName>groups</DisplayName>
+        <DataType>stringCollection</DataType>
+      </ClaimType>
+
+      <ClaimType Id="onlyMembersOf">
+        <DisplayName>onlyMembersOf</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <!-- END for group membership demo -->
+
+        
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -362,14 +515,135 @@
           <InputParameter Id="valueToCompareTo" DataType="boolean" Value="true" />
         </InputParameters>
       </ClaimsTransformation>
+
+      <!--Sample: This returns a boolean value assigned to "renewalTOSrequired" to determine whether the user's last accepted TOS (extension_AgreedToTermsOfService)
+      equals to the current Company's TOS version (policyTOSversion). If the two variables are not equal, it will write the value "true" in the renewalTOSrequired claim.-->
+      <ClaimsTransformation Id="IsTermsOfServiceRequired" TransformationMethod="CompareClaims">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="policyTOSversion" TransformationClaimType="inputClaim1" />
+            <InputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" TransformationClaimType="inputClaim2" />
+          </InputClaims>
+          <InputParameters>
+            <InputParameter Id="operator" DataType="string" Value="NOT EQUAL" />
+            <InputParameter Id="ignoreCase" DataType="string" Value="true" />
+          </InputParameters>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="renewalTOSrequired" TransformationClaimType="outputClaim" />
+          </OutputClaims>
+        </ClaimsTransformation>
+  
+        <!--Sample: This verifies whether or not the TOS button has been selected by checking if the correct variable has been 
+        assigned to the AgreedToTermsOfService button. If not selected, then "did not accept" value will be assigned to it.-->
+        <ClaimsTransformation Id="AssertTOSHasBeenSelected" TransformationMethod="AssertStringClaimsAreEqual">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="AgreedToTermsOfService" TransformationClaimType="inputClaim1" />
+            <InputClaim ClaimTypeReferenceId="policyTOSversion" TransformationClaimType="inputClaim2" />
+          </InputClaims>
+          <InputParameters>
+            <InputParameter Id="stringComparison" DataType="string" Value="ordinalIgnoreCase" />
+          </InputParameters>
+        </ClaimsTransformation>
+
+        <!-- Sample claims for service-consent demo -->
+        <ClaimsTransformation Id="MergeRequiredAndOptionalConsentRequest" TransformationMethod="FormatStringMultipleClaims">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="extension_consentRequired" TransformationClaimType="inputClaim1" />
+            <InputClaim ClaimTypeReferenceId="extension_consentOptional" TransformationClaimType="inputClaim2" />
+          </InputClaims>
+          <InputParameters>
+            <InputParameter Id="stringFormat" DataType="string" Value="{0},{1}" />
+          </InputParameters>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_currentConsent" TransformationClaimType="outputClaim" />
+          </OutputClaims>
+        </ClaimsTransformation>
+
+      <!-- Account Linking -->
+      <!--Sample: Initiates the errorMessage claims type with the error message-->
+      <ClaimsTransformation Id="CreateUserExistsErrorMessage" TransformationMethod="FormatStringClaim">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="issuerToLink" TransformationClaimType="inputClaim" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="stringFormat" DataType="string" Value="Your {0} identity is already existed in the directory. You need to delete this account, and then you will be able to link to another account" />
+        </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="errorMessage" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <!-- Sample: On sign-in (first time) with social account, create a userIdentity claim, using issuerUserId and issuer name --> 
+      <ClaimsTransformation Id="CreateUserIdentity" TransformationMethod="CreateUserIdentity">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="issuerUserId" TransformationClaimType="issuerUserId" />
+          <InputClaim ClaimTypeReferenceId="identityProvider" TransformationClaimType="issuer" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userIdentity" TransformationClaimType="userIdentity" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <!-- Sample: On sign-in (second time) with social account, create a userIdentityToLink claim, using issuerUserId and issuer name --> 
+      <ClaimsTransformation Id="CreateUserIdentityToLink" TransformationMethod="CreateUserIdentity">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="issuerUserIdToLink" TransformationClaimType="issuerUserId" />
+          <InputClaim ClaimTypeReferenceId="issuerToLink" TransformationClaimType="issuer" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userIdentityToLink" TransformationClaimType="userIdentity" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <!--Sample: Add a userIdentity to the userIdentities collection. .-->
+      <ClaimsTransformation Id="AppendUserIdentity" TransformationMethod="AddItemToUserIdentityCollection">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="userIdentity" TransformationClaimType="item" />
+          <InputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <ClaimsTransformation Id="AppendUserIdentityToLink" TransformationMethod="AddItemToUserIdentityCollection">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="userIdentityToLink" TransformationClaimType="item" />
+          <InputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </OutputClaims>
+      </ClaimsTransformation>
+
+      <!--Sample: Removes an issuer from the  claim from the userIdentities collection-->
+      <ClaimsTransformation Id="RemoveUserIdentityFromCollectionByIssuer" TransformationMethod="RemoveUserIdentityFromCollectionByIssuer">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="issuerToUnlink" TransformationClaimType="issuer" />
+          <InputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="collection" />
+        </OutputClaims>
+      </ClaimsTransformation>
+      
+      <!--Sample: Extracts the list of social identity providers associated with the user -->
+      <ClaimsTransformation Id="ExtractIssuers" TransformationMethod="GetIssuersFromUserIdentityCollectionTransformation">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="userIdentities" TransformationClaimType="userIdentityCollection" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="issuers" TransformationClaimType="issuersCollection" />
+        </OutputClaims>
+      </ClaimsTransformation>
+      <!-- End Account Linking -->
+
     </ClaimsTransformations>
 
     <ClientDefinitions>
       <ClientDefinition Id="DefaultWeb">
         <ClientUIFilterFlags>LineMarkers, MetaRefresh</ClientUIFilterFlags>
       </ClientDefinition>
-    </ClientDefinitions>
-
+      </ClientDefinitions>
     <ContentDefinitions>
 
       <!-- This content definition is to render an error page that displays unhandled errors. -->
@@ -421,7 +695,8 @@
       </ContentDefinition>
 
       <ContentDefinition Id="api.selfasserted.profileupdate">
-        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <!-- <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri> -->
+        <LoadUri>https://nielskilabb2c.blob.core.windows.net/web/customize-ui.html</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:selfasserted:1.1.0</DataUri>
         <Metadata>
@@ -466,21 +741,15 @@
             <Item Key="UserMessageIfClaimsPrincipalDoesNotExist">We can't seem to find your account</Item>
             <Item Key="UserMessageIfInvalidPassword">Your password is incorrect</Item>
             <Item Key="UserMessageIfOldPasswordUsed">Looks like you used an old password</Item>
-
             <Item Key="ProviderName">https://sts.windows.net/</Item>
             <Item Key="METADATA">https://login.microsoftonline.com/{tenant}/.well-known/openid-configuration</Item>
             <Item Key="authorization_endpoint">https://login.microsoftonline.com/{tenant}/oauth2/token</Item>
             <Item Key="response_types">id_token</Item>
             <Item Key="response_mode">query</Item>
             <Item Key="scope">email openid</Item>
-
             <!-- Policy Engine Clients -->
             <Item Key="UsePolicyInRedirectUri">false</Item>
             <Item Key="HttpBinding">POST</Item>
-
-            <!-- AAD integration -->
-            <Item Key="client_id">101d3c23-6df9-422a-b5c8-0d0c0255d36c</Item>
-            <Item Key="IdTokenAudience">5e576c3e-c5e5-4700-a811-76603063a1f2</Item>
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="username" Required="true" />
@@ -512,9 +781,11 @@
           <DisplayName>Azure Active Directory</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 
+          <!-- Moved to TrustFrameworkExtensions
           <CryptographicKeys>
             <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
           </CryptographicKeys>
+          -->
 
           <!-- We need this here to suppress the SelfAsserted provider from invoking SSO on validation profiles. -->
           <IncludeInSso>false</IncludeInSso>
@@ -570,9 +841,7 @@
           </InputClaims>
           <OutputClaims>
             <!-- Required claims -->
-  
             <OutputClaim ClaimTypeReferenceId="objectId" />
-
             <!-- Optional claims -->
             <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
             <OutputClaim ClaimTypeReferenceId="displayName" />
@@ -589,9 +858,138 @@
           </Metadata>
           <IncludeTechnicalProfile ReferenceId="AAD-UserReadUsingAlternativeSecurityId" />
         </TechnicalProfile>
+
+        <!-- Technical profiles for account linking -->
+        <TechnicalProfile Id="AAD-UserReadUsingUserIdentityToLink-NoError">
+          <Metadata>
+            <Item Key="api-version">1.6</Item>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="userIdentities" PartnerClaimType="userIdentities" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectIdToLink" PartnerClaimType="objectId" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>   
+
+        <TechnicalProfile Id="AAD-UserReadUsingUserIdentity">
+          <Metadata>
+            <Item Key="api-version">1.6</Item>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+            <Item Key="UserMessageIfClaimsPrincipalDoesNotExist">User does not exist. Please sign up before you can sign in.</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="userIdentities" PartnerClaimType="userIdentities" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="userIdentities" />
+
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
+            <OutputClaim ClaimTypeReferenceId="objectIdToLink" PartnerClaimType="objectId" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="ExtractIssuers" />
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserReadUsingUserIdentity-NoError">
+          <Metadata>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <IncludeTechnicalProfile ReferenceId="AAD-UserReadUsingUserIdentity" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserWriteUsingUserIdentity">
+          <Metadata>
+            <Item Key="api-version">1.6</Item>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+            <Item Key="UserMessageIfClaimsPrincipalAlreadyExists">You are already registered, please press the back button and sign in instead.</Item>
+          </Metadata>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="CreateOtherMailsFromEmail"/>
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="userIdentities" PartnerClaimType="userIdentities" Required="true"/>
+          </InputClaims>
+          <PersistedClaims>
+            <!-- Required claims -->
+            <PersistedClaim ClaimTypeReferenceId="userIdentities"/>
+            <PersistedClaim ClaimTypeReferenceId="userPrincipalName"/>
+            <PersistedClaim ClaimTypeReferenceId="mailNickName" DefaultValue="unknown"/>
+            <PersistedClaim ClaimTypeReferenceId="displayName" DefaultValue="unknown"/>
+
+            <!-- Optional claims -->
+            <PersistedClaim ClaimTypeReferenceId="otherMails"/>
+            <PersistedClaim ClaimTypeReferenceId="givenName"/>
+            <PersistedClaim ClaimTypeReferenceId="surname"/>
+          </PersistedClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId"/>
+            <OutputClaim ClaimTypeReferenceId="userIdentities"/>
+            <OutputClaim ClaimTypeReferenceId="newUser" PartnerClaimType="newClaimsPrincipalCreated"/>
+            <!-- The following other mails claim is needed for the case when a user is created, we get otherMails from directory. Self-asserted provider also has an
+                 OutputClaims, and if this is absent, Self-Asserted provider will prompt the user for otherMails. -->
+            <OutputClaim ClaimTypeReferenceId="otherMails"/>
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common"/>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD"/>
+        </TechnicalProfile>
+
+        <!--Sample: Update the userIdentities to add or remove user identity -->
+        <TechnicalProfile Id="AAD-UserUpdateWithUserIdentities">
+          <Metadata>
+            <Item Key="api-version">1.6</Item>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="objectId" />
+            <PersistedClaim ClaimTypeReferenceId="userIdentities" />
+          </PersistedClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="userIdentities" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="ExtractIssuers" />
+          </OutputClaimsTransformations>          
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
+        <!--Sample: Reads local account's userIdentities attribute to userIdentities claim-->
+        <TechnicalProfile Id="AAD-UserReadUsingObjectIdLinking">
+          <DisplayName>Read User with Object ID</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="api-version">1.6</Item>
+          </Metadata>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="userIdentities" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="ExtractIssuers" />
+          </OutputClaimsTransformations>
+        </TechnicalProfile>
+        <!-- End account linking profiles -->
  
         <!-- Technical profiles for local accounts -->
-
         <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
           <Metadata>
             <Item Key="Operation">Write</Item>
@@ -611,6 +1009,11 @@
             <!-- Optional claims. -->
             <PersistedClaim ClaimTypeReferenceId="givenName" />
             <PersistedClaim ClaimTypeReferenceId="surname" />
+
+            <!--Sample: AAD-UserWriteUsingLogonEmail appends the base policy by writing the value stored in claim named "AgreedToTermsOfService"
+            to the AzureAD B2C directory ext attribute called "extension_AgreedToTermsOfService"-->
+            <PersistedClaim ClaimTypeReferenceId="AgreedToTermsOfService" PartnerClaimType="extension_AgreedToTermsOfService" />
+
           </PersistedClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="objectId" />
@@ -683,10 +1086,11 @@
           <PersistedClaims>
             <!-- Required claims -->
             <PersistedClaim ClaimTypeReferenceId="objectId" />
-
             <!-- Optional claims -->
             <PersistedClaim ClaimTypeReferenceId="givenName" />
             <PersistedClaim ClaimTypeReferenceId="surname" />
+            <PersistedClaim ClaimTypeReferenceId="extension_currentConsent" />
+
           </PersistedClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -696,20 +1100,25 @@
           <Metadata>
             <Item Key="Operation">Read</Item>
             <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+            <Item Key="api-version">1.6</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
           </InputClaims>
           <OutputClaims>
-
             <!-- Optional claims -->
             <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <OutputClaim ClaimTypeReferenceId="displayName" />
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
+            <OutputClaim ClaimTypeReferenceId="extension_currentConsent" />
+            <OutputClaim ClaimTypeReferenceId="userIdentities" />
           </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="ExtractIssuers" />
+          </OutputClaimsTransformations>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
 
@@ -768,31 +1177,187 @@
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
-
             <InputClaim ClaimTypeReferenceId="alternativeSecurityId" />
-
             <InputClaim ClaimTypeReferenceId="userPrincipalName" />
 
             <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
                  ValidationTechnicalProfile referenced below so it can be written to directory after being updateed by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
             <InputClaim ClaimTypeReferenceId="givenName" />
             <InputClaim ClaimTypeReferenceId="surname" />
+            <InputClaim ClaimTypeReferenceId="extension_currentConsent" />
           </InputClaims>
           <OutputClaims>
             <!-- Required claims -->
             <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
-
             <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
                  ValidationTechnicalProfile referenced below so it can be written to directory after being updateed by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
+            <!-- NOTE: error when this line is uncommented. Suspect we need to parse the comma-delimited array to load values in the UI. Needs research. -->
+            <!-- <OutputClaim ClaimTypeReferenceId="extension_currentConsent" /> -->
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteProfileUsingObjectId" />
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
+
+        <!-- Account Linking -->
+        <!-- Demo: Show error message if user exists-->
+        <TechnicalProfile Id="SelfAsserted-Error">
+          <DisplayName>Unsolicited error message</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <!-- Sample: Remove the continue button-->
+            <Item Key="setting.showContinueButton">false</Item>
+        </Metadata>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="CreateUserExistsErrorMessage" />
+          </InputClaimsTransformations>         
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="errorMessage"/>
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="errorMessage"/>
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="SelfAsserted-Social-v2">
+          <DisplayName>User ID signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer"/>
+          </CryptographicKeys>
+          <InputClaims>
+            <!-- These claims ensure that any values retrieved in the previous steps (e.g. from an external IDP) are prefilled. 
+                 Note that some of these claims may not have any value, for example, if the external IDP did not provide any of
+                 these values, or if the claim did not appear in the OutputClaims section of the IDP.
+                 In addition, if a claim is not in the InputClaims section, but it is in the OutputClaims section, then its
+                 value will not be prefilled, but the user will still be prompted for it (with an empty value). -->
+            <InputClaim ClaimTypeReferenceId="displayName"/>
+            <InputClaim ClaimTypeReferenceId="givenName"/>
+            <InputClaim ClaimTypeReferenceId="surname"/>
+          </InputClaims>
+          <OutputClaims>
+            <!-- These claims are not shown to the user because their value is obtained through the "ValidationTechnicalProfiles"
+                 referenced below, or a default value is assigned to the claim. A claim is only shown to the user to provide a 
+                 value if its value cannot be obtained through any other means. -->
+            <OutputClaim ClaimTypeReferenceId="objectId"/>
+            <OutputClaim ClaimTypeReferenceId="newUser"/>
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true"/>
+
+            <!-- Optional claims. These claims are collected from the user and can be modified. If a claim is to be persisted in the directory after having been 
+                 collected from the user, it needs to be added as a PersistedClaim in the ValidationTechnicalProfile referenced below, i.e. 
+                 in AAD-UserWriteUsingAlternativeSecurityId. -->
+            <OutputClaim ClaimTypeReferenceId="displayName"/>
+            <OutputClaim ClaimTypeReferenceId="givenName"/>
+            <OutputClaim ClaimTypeReferenceId="surname"/>
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingUserIdentity"/>
+          </ValidationTechnicalProfiles>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialSignup"/>
+        </TechnicalProfile>
+
+
+
+        <!-- end Account Linking -->
+
+
+
       </TechnicalProfiles>
     </ClaimsProvider>
+
+    <!-- Added to support  terms-of-service consent -->
+    <ClaimsProvider>
+      <DisplayName>Self Asserted Terms And Use Refresh if Not Valid</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SelfAsserted-RefreshTOS">
+          <DisplayName>Terms And Use Update</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <!--Sample action required: Customize your own error message if user attempts to bypass TOS-->
+            <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">Customizable Error Message</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="AgreedToTermsOfService" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="VerfiyTOSConsentedTo" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteProfileUsingObjectIdUpdateTOU" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+     <!-- Added to support  terms-of-service consent -->
+     <ClaimsProvider>
+        <DisplayName>Write Updated Terms of Service</DisplayName>
+        <TechnicalProfiles>
+  
+          <!--
+          Sample:Verifies TOS Button was clicked before hitting Submit.
+          If user does not, it tells the previous TechnicalProfile to render a custom error.
+          -->
+          <TechnicalProfile Id="VerfiyTOSConsentedTo">
+            <DisplayName>Verifies TOS has been Accepted </DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" />
+            </OutputClaims>
+            <OutputClaimsTransformations>
+              <OutputClaimsTransformation ReferenceId="AssertTOSHasBeenSelected" />
+            </OutputClaimsTransformations>
+          </TechnicalProfile>
+          
+          <!--Sample: ValidationTechnicalProfile that updates the  authenticated user's renewal TOS into the Azure AD B2C directory-->
+          <TechnicalProfile Id="AAD-UserWriteProfileUsingObjectIdUpdateTOU">
+            <Metadata>
+              <Item Key="Operation">Write</Item>
+              <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item>
+              <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+            </InputClaims>
+            <PersistedClaims>
+              <PersistedClaim ClaimTypeReferenceId="objectId" />
+              <!--Sample: Takes the value stored in "AgreedToTermsOfService" and writes to the known B2C directory extension "extension_AgreedToTermsOfService"-->
+              <PersistedClaim ClaimTypeReferenceId="AgreedToTermsOfService" PartnerClaimType="extension_AgreedToTermsOfService" />
+            </PersistedClaims>
+            <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+          </TechnicalProfile>
+  
+          <!--Sample: CheckTOSrequire is a Sign-in auth flow check that sets whether a TOS has changed since last TOS acceptance.
+          A boolean variable is set onto "renewalTOSrequired" claim that is latered used in an OrchestrationStep to ask the user to accept new TOS -->
+          <TechnicalProfile Id="CheckTOSrequirement">
+            <DisplayName> Check TOS Requirement </DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="policyTOSversion" Required="true" />
+              <InputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" Required="true" />
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="renewalTOSrequired" />
+              <OutputClaim ClaimTypeReferenceId="policyTOSversion" />
+              <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" />
+            </OutputClaims>
+            <OutputClaimsTransformations>
+              <OutputClaimsTransformation ReferenceId="IsTermsOfServiceRequired" />
+            </OutputClaimsTransformations>
+          </TechnicalProfile>
+        </TechnicalProfiles>
+    </ClaimsProvider>     
+
 
     <ClaimsProvider>
       <DisplayName>Local Account</DisplayName>
@@ -825,6 +1390,15 @@
             <OutputClaim ClaimTypeReferenceId="displayName" />
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surName" />
+
+            <!--Demo: Add the groups claim type to the output claim collection-->
+            <OutputClaim ClaimTypeReferenceId="groups" />
+
+            <!-- Supports consent to Terms of Service-->
+            <OutputClaim ClaimTypeReferenceId="AgreedToTermsOfService" Required="true" />
+            <!--Sample: This is set to "false" by default to bypass OrchestrationStep 4 during Sign-in-->
+            <OutputClaim ClaimTypeReferenceId="renewalTOSrequired" DefaultValue="false" />
+
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
@@ -844,17 +1418,67 @@
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="signInName" />
+            <InputClaim ClaimTypeReferenceId="policyTOSversion" DefaultValue="v16" />
           </InputClaims>
           <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="policyTOSversion" DefaultValue="v16" /> <!-- Modifiction to support consent to Terms of Use -->
             <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
             <OutputClaim ClaimTypeReferenceId="password" Required="true" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" /> <!-- Modifiction to support consent to Terms of Use -->
+
+            <!--Demo: Add the groups claim type to the output claim collection-->
+            <OutputClaim ClaimTypeReferenceId="groups" />
+
           </OutputClaims>
+          <OutputClaimsTransformations>
+              <!--Sample: IsTermsOfServiceRequired Outputs a boolean check to compare whether renewal is required by 
+              checking the user's last accepted TOS version (extension_AgreedToTermsOfService) and the Company's policy (policyTOSversion)-->
+              <OutputClaimsTransformation ReferenceId="IsTermsOfServiceRequired" />
+            </OutputClaimsTransformations>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
+            <!--Sample: AAD-ReadTOS Reads Azure AD B2C directory and pulls the user's last accepted TOS version (extension_AgreedToTermsOfService)-->
+            <ValidationTechnicalProfile ReferenceId="AAD-ReadTOS" />
+            <!-- for group membership demo -->
+            <ValidationTechnicalProfile ReferenceId="REST-RBAC" />
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <!-- service-consent demo -->
+        <!-- write the current time to the consent attribute if the user reconsents to TOU on sign in -->
+        <TechnicalProfile Id="AAD-UserWriteConsentUsingObjectId">
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="objectId" />
+            <PersistedClaim ClaimTypeReferenceId="extension_currentConsent"/>
+          </PersistedClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <!-- Modifiction to support consent to Terms of Use -->
+        <TechnicalProfile Id="AAD-ReadTOS">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_AgreedToTermsOfService" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
 
         <!-- This technical profile forces the user to verify the email address that they provide on the UI. Only after email is verified, the user account is
@@ -985,6 +1609,72 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+
+    <!-- Google Sign-in -->
+    <ClaimsProvider>
+      <Domain>google.com</Domain>
+      <DisplayName>Google</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Google-OAUTH">
+          <DisplayName>Google</DisplayName>
+          <Protocol Name="OAuth2" />
+          <Metadata>
+            <Item Key="ProviderName">google</Item>
+            <Item Key="authorization_endpoint">https://accounts.google.com/o/oauth2/auth</Item>
+            <Item Key="AccessTokenEndpoint">https://accounts.google.com/o/oauth2/token</Item>
+            <Item Key="ClaimsEndpoint">https://www.googleapis.com/oauth2/v1/userinfo</Item>
+          </Metadata>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="id" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
+            <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+            <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
+            <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+            <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="google.com" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+            <OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+            <OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+            <OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+          </OutputClaimsTransformations>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialLogin" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!-- Demo: Technical profile to read and validate user's groups-->
+    <ClaimsProvider>
+      <DisplayName>REST APIs</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="REST-RBAC">
+          <DisplayName>Read and validate user's groups</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <!--Demo: Change the service URL with your REST API location-->
+            <Item Key="ServiceUrl">https://trniel-graphclient.azurewebsites.net/api/Identity/IsMemberOf</Item>
+            
+            <!--Demo: Change the AuthenticationType to basic or ClientCertificate.
+            For more information, see: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-custom-rest-api-netfw-secure-cert-->
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" />
+            <!--Demo: set the DefaultValue to empty string or comma delimiter list 
+            of security groups to validate-->
+            <!-- <InputClaim ClaimTypeReferenceId="onlyMembersOf" DefaultValue="admins" /> -->
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="groups" />
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
   </ClaimsProviders>
 
 </TrustFrameworkPolicy>

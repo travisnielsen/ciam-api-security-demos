@@ -10,7 +10,7 @@
 
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_AccountLink_Extensions</PolicyId>
+    <PolicyId>B2C_1A_Extensions</PolicyId>
   </BasePolicy>
   <ClaimsProviders>
     <ClaimsProvider>
@@ -31,6 +31,7 @@
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange"/>
+            <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange"/>
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange"/>
           </ClaimsProviderSelections>
           <ClaimsExchanges>
@@ -48,6 +49,7 @@
           </Preconditions>
           <ClaimsExchanges>
             <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-SignIn"/>
+            <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH-SignIn"/>
             <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail"/>
           </ClaimsExchanges>
         </OrchestrationStep>
@@ -115,6 +117,7 @@
         <OrchestrationStep Order="7" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
           <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
             <ClaimsProviderSelection TargetClaimsExchangeId="LinkGoogleExchange"/>
+            <ClaimsProviderSelection TargetClaimsExchangeId="LinkContosoExchange"/>
           </ClaimsProviderSelections>
         </OrchestrationStep>
 
@@ -122,6 +125,7 @@
         <OrchestrationStep Order="8" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="LinkGoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-Link"/>
+            <ClaimsExchange Id="LinkContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH-Link"/>
           </ClaimsExchanges>
         </OrchestrationStep>
 

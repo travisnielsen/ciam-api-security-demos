@@ -132,8 +132,7 @@
         type: "GET",
         url: appConfig.webApi,
         headers: {
-          'Authorization': 'Bearer ' + accessToken,
-          'Ocp-Apim-Subscription-Key': '67f3d2869d7e49dcbfa803e84c19340f'
+          'Authorization': 'Bearer ' + accessToken
         },
       }).done(function (data) {
         logMessage("Web APi returned:\n" + JSON.stringify(data));

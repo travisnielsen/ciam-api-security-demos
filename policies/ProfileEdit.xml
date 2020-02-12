@@ -4,149 +4,64 @@ TenantId="nielskilab.onmicrosoft.com" PolicyId="B2C_1A_ProfileEdit"
 PublicPolicyUri="http://nielskilab.onmicrosoft.com/B2C_1A_ProfileEdit" TenantObjectId="nielskilab.onmicrosoft.com">
   <BasePolicy>
     <TenantId>nielskilab.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_TrustFrameworkExtensions</PolicyId>
+    <PolicyId>B2C_1A_Extensions</PolicyId>
   </BasePolicy>
 
   <UserJourneys>
-      <UserJourney Id="ProfileEdit">
-        <OrchestrationSteps>
-        
-          <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections">
-            <ClaimsProviderSelections>
-              <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="ContosoExchange" />
-              <ClaimsProviderSelection TargetClaimsExchangeId="FabrikamExchange" />
-            </ClaimsProviderSelections>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="2" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
-              <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth" />
-              <ClaimsExchange Id="ContosoExchange" TechnicalProfileReferenceId="Contoso-OAUTH" />
-              <ClaimsExchange Id="FabrikamExchange" TechnicalProfileReferenceId="Fabrikam-OAUTH" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="3" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>localAccountAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserRead" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- Check if the user has selected to sign in using one of the social providers -->
-          <OrchestrationStep Order="4" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-                <Value>authenticationSource</Value>
-                <Value>socialIdpAuthentication</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <OrchestrationStep Order="5" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="B2CUserProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted-ProfileUpdate" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-  
-          <!-- API scope consent -->
-          <OrchestrationStep Order="6" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="ShowToUConsentPageForNewUser" TechnicalProfileReferenceId="SelfAsserted-Consent-Page" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-    
-          <!-- API scope consent -->
-          <OrchestrationStep Order="7" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AADUserWriteConsent" TechnicalProfileReferenceId="AAD-UserWriteConsentUsingObjectId" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
 
-          <!-- Account Linking -->
+    <UserJourney Id="ProfileEdit">
+      <OrchestrationSteps>
+      
+        <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections">
+          <ClaimsProviderSelections>
+            <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
+          </ClaimsProviderSelections>
+        </OrchestrationStep>
 
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-SignIn" />
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
 
-          <!--Sample: Displays the sign-in the social account buttons.-->
-          <OrchestrationStep Order="8" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
-            <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
-              <ClaimsProviderSelection TargetClaimsExchangeId="LinkGoogleExchange"/>
-            </ClaimsProviderSelections>
-          </OrchestrationStep>    
-          
-          <!-- Sample: Redirect the user to the selected social provider, to complete the sign-in and link the new account -->
-          <OrchestrationStep Order="9" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="LinkGoogleExchange" TechnicalProfileReferenceId="Google-OAUTH-Link"/>
-            </ClaimsExchanges>
-          </OrchestrationStep>   
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>localAccountAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadUsingUserIdentity" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentity-NoError" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
 
-
-          <!-- Sample: Attempt to find the second user account in the directory. -->
-          <OrchestrationStep Order="10" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="AAADUserReadUsingUserIdentityToLink" TechnicalProfileReferenceId="AAD-UserReadUsingUserIdentityToLink-NoError"/>
-            </ClaimsExchanges>
-          </OrchestrationStep>
-
-          <!-- Sample: Check whether the user not existed in the directory -->
-          <OrchestrationStep Order="11" Type="ClaimsExchange">
-            <Preconditions>
-              <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                <Value>objectIdToLink</Value>
-                <Action>SkipThisOrchestrationStep</Action>
-              </Precondition>
-            </Preconditions>
-            <ClaimsExchanges>
-              <ClaimsExchange Id="SelfAssertedError" TechnicalProfileReferenceId="SelfAsserted-Error" />
-            </ClaimsExchanges>
-          </OrchestrationStep>
-
-          <!-- Sample: Display UI for unlinking -->
-
-          <!-- ERROR WHEN ENABLED - AADB2C90051: No suitable claims providers were found.
-          <OrchestrationStep Order="8" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.idpselections">
-            <ClaimsProviderSelections DisplayOption="ShowSingleProvider">
-              <ClaimsProviderSelection TargetClaimsExchangeId="UnlinkGoogleExchange"/>
-            </ClaimsProviderSelections>
-          </OrchestrationStep>
-          -->
-
-          <!--Sample: Display social account buttons.-->
-          <!--
-          <OrchestrationStep Order="8" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="UnlinkGoogleExchange" TechnicalProfileReferenceId="Google-Unlink"/>
-            </ClaimsExchanges>
-          </OrchestrationStep>
-          -->
-
-          <!-- Sample: Update the user identities collection for the account. -->
-          <OrchestrationStep Order="12" Type="ClaimsExchange">
-            <ClaimsExchanges>
-              <ClaimsExchange Id="UpdateUserIdentities" TechnicalProfileReferenceId="AAD-UserUpdateWithUserIdentities"/>
-            </ClaimsExchanges>
-          </OrchestrationStep>
-
-          <!-- End Account Linking -->
-  
-          <OrchestrationStep Order="13" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-   
-        </OrchestrationSteps>
-        <ClientDefinition ReferenceId="DefaultWeb" />
-      </UserJourney>
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>socialIdpAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+ 
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="B2CUserProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted-ProfileUpdate" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="6" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+ 
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
 
   </UserJourneys>
   
