@@ -85,6 +85,17 @@
         <UserHelpText>User identity providers. This information is received from alternativeSecurityIds</UserHelpText>
       </ClaimType>
 
+      <ClaimType Id="issuer">
+        <DisplayName>Identity Provider</DisplayName>
+        <DataType>string</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="idp" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="idp" />
+          <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/identityprovider" />
+        </DefaultPartnerClaimTypes>
+        <UserHelpText/>
+      </ClaimType>
+
       <!-- Extension for Terms of Use start -->
 
       <ClaimType Id="extension_termsOfUseConsentChoice">
@@ -649,6 +660,7 @@
 
     <!-- Generic OIDC Contoso -->
     <ClaimsProvider>
+      <Domain>contoso.com</Domain>
       <DisplayName>Contoso</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="Contoso-OAUTH-Base">
@@ -663,7 +675,7 @@
             <Item Key="response_mode">form_post</Item>
             <Item Key="UsePolicyInRedirectUri">0</Item>
             <Item Key="client_id">nielskib2c</Item>
-            <Item Key="scope">openid</Item>
+            <Item Key="scope">openid profile</Item>
             <Item Key="HttpBinding">POST</Item>
           </Metadata>
           <CryptographicKeys>
@@ -674,10 +686,12 @@
         <TechnicalProfile Id="Contoso-OAUTH-SignIn">
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="sub" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
             <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
             <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
             <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
             <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="contoso.com" />
+            <OutputClaim ClaimTypeReferenceId="issuer" DefaultValue="contoso.com" AlwaysUseDefaultValue="true" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" />
 
             <!-- Supports consent to Terms of Service-->
